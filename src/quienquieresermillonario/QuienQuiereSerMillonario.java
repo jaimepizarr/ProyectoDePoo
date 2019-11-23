@@ -127,21 +127,11 @@ public class QuienQuiereSerMillonario {
                     switch (opcionParticipante){
                         case "1":
                             //matricula del participante
-                            System.out.println("Ingrese su matricula:");
-                            String matriculaEstudiante= entrada.nextLine();
-                            String nombEst = null;
-                            for (Estudiante e: est){
-                                if (e.getMatricula().equals(matriculaEstudiante)){
-                                    nombEst = e.getNombre();
-                                }
-                            }
-                            participante = nombEst;
+                            participante = nombreporMatricula(est);
                             break;
                         case "2":
                             //Eleccion del participante aleatoreamente
-                           Estudiante  participar = getRandomEstudiantes(est);
-                           String nombreEstudiante=participar.getNombre();
-                           participante = nombreEstudiante;
+                           participante = nombreporAleatorio(est);
                             System.out.println("El estudiante elegido es: "+participante);
                             break;
 
@@ -735,5 +725,25 @@ public class QuienQuiereSerMillonario {
         }
         return saltos;
     }
-
-}//clase
+    public String nombreporMatricula(ArrayList<Estudiante> est){
+        System.out.println("Ingrese su matricula:");
+        String matriculaEstudiante= entrada.nextLine();
+        String nombEst = null;
+        for (Estudiante e: est){
+            if (e.getMatricula().equals(matriculaEstudiante)){
+                nombEst = e.getNombre();
+            }
+        }
+        return nombEst;
+    }    
+    public String nombreporAleatorio(ArrayList<Estudiante> est){
+        Estudiante participar = getRandomEstudiantes(est);
+        String nombreEstudiante= participar.getNombre();
+        return nombreEstudiante;
+        }
+        
+    }
+//clase
+    
+        
+   
