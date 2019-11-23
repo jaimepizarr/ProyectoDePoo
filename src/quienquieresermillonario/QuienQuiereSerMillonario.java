@@ -235,10 +235,11 @@ public class QuienQuiereSerMillonario {
                                 }
                                
                                 System.out.println("Elija un comodin");
-                                String comElegido= entrada.nextLine().toUpperCase();
-                                comodines.remove(comElegido);
+                                int comElegido= entrada.nextInt();
+                                entrada.nextLine();
+                                comodines.remove(comodines.get(comElegido-1));
                                 switch (comElegido){
-                                    case "50/50":
+                                    case 1:
                                         
                                         Random aleatorio = new Random(System.currentTimeMillis());
                                         int numAleatorio1 = aleatorio.nextInt(respIncorrectas.size()-1);
@@ -248,11 +249,11 @@ public class QuienQuiereSerMillonario {
                                         letras.remove("D");
                                         break;
                                         
-                                    case "Consulta al compañero":
+                                    case 2:
                                         System.out.println("Ha usado el comodin CONSULTA AL COMPAÑERO");
                                         break;
                                     
-                                    case "Consulta al salón":
+                                    case 3:
                                         System.out.println("Ha usado el comodin CONSULTA AL SALON");
                                 }
                             }
