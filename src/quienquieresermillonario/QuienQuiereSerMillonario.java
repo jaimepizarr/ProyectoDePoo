@@ -212,7 +212,7 @@ public class QuienQuiereSerMillonario {
                             System.out.println("Ingrese la letra de la respuesta elegida");
 */
                             String repuestaElegida= entrada.nextLine();
-                            if(!repuestaElegida.toUpperCase().equals(letraCorrecta)){
+                            if((!repuestaElegida.toUpperCase().equals(letraCorrecta)) &&(!repuestaElegida.equals("*")) ){
                                 System.out.println("Perdiste");
                                 System.out.println("FIN DEL JUEGO");
                                 salir=1;
