@@ -29,10 +29,10 @@ import java.util.logging.Logger;
 @SuppressWarnings("InitializerMayBeStatic")
 public class JuegoPrincipal {
     Scanner entrada = new Scanner(System.in);
-    private ArrayList<Termino> terminosacad = new ArrayList<>();
+    private ArrayList<Termino> terminos_existentes = new ArrayList<>();
     private Termino terminoJuegonu;
-    private ArrayList<Materia> materias = new ArrayList<>();
-    private ArrayList<Paralelo> paralelos = new ArrayList<>();
+    private ArrayList<Materia> materiasJuego = new ArrayList<>();
+    private ArrayList<Paralelo> paralelosJuego = new ArrayList<>();
     private ArrayList<Reporte> reportes =new ArrayList<>();
     private Paralelo paraleloJuego =null;
     private String premio = "";
@@ -45,7 +45,7 @@ public class JuegoPrincipal {
         game.menu();
 
     }//main
-
+    
 
     public void menu(){
         String entryMP= "a";
@@ -56,11 +56,9 @@ public class JuegoPrincipal {
            "4. Salir");
            String opcion= entrada.nextLine();
             switch (opcion){
-            //CONFIGURACIONES
             case "1":
                 configuraciones();
-                break;//CASE1 PRINCIPAL
-            //NUEVO JUEGO
+                break;
             case "2":
                 if(terminoJuegonu != null){
                     System.out.println("JUEGO NUEVO");
@@ -75,7 +73,7 @@ public class JuegoPrincipal {
                     System.out.println("Ingrese Paralelo");
                     String paralelo= entrada.nextLine();
                     ArrayList<Estudiante> est = new ArrayList<>();
-                    for (Paralelo p:paralelos){
+                    for (Paralelo p:paralelosJuego){
                        
                         if (p.getParaleloCod().equals(paralelo)){
                             paraleloJuego=p;
@@ -87,12 +85,8 @@ public class JuegoPrincipal {
                         }
                     }
                     //Preguntas por nivel
-                    
-                    Materia mat = getMateriaConNombre(nombreMateria);
-                    
+                    Materia mat = getMateriaConNombre(nombreMateria);                    
                     String entry = "a";
-                    
-                    
                     
                     int numNivel=0;
                     while(entry == "a"){
@@ -504,15 +498,15 @@ public class JuegoPrincipal {
                 int cantidadNiveles= entrada.nextInt();
                 entrada.nextLine();
                 Materia materia = new Materia(nombre,codigoMateria,cantidadNiveles);
-                materias.add(materia);
+                materiasJuego.add(materia);
                 break;
 
             case "2":
                 System.out.println("Ingrese Codigo Materia");
                 String materiaAeditar= entrada.nextLine();
                 int pos = 0;
-                for (int i =0; i<materias.size();++i){
-                    if (materias.get(i).getNombre().equals(materiaAeditar)){
+                for (int i =0; i<materiasJuego.size();++i){
+                    if (materiasJuego.get(i).getNombre().equals(materiaAeditar)){
                         pos=i;
                     }
                 }
@@ -521,7 +515,7 @@ public class JuegoPrincipal {
                 while (resp == "Y"){
                     System.out.println("Ingrese el nombre que desea poner");
                     String nombre_nuevo = entrada.nextLine();
-                    materias.get(pos).setNombre(nombre_nuevo);
+                    materiasJuego.get(pos).setNombre(nombre_nuevo);
                 }
                 String resp2="Y";
                 System.out.println("Desea cambiar la cantidad de niveles de la materia? Y/N");
@@ -529,7 +523,7 @@ public class JuegoPrincipal {
                     System.out.println("Ingrese la cantidad de niveles");
                     int niveles = entrada.nextInt();
                     entrada.nextLine();
-                    materias.get(pos).setCantidadNiveles(niveles);
+                    materiasJuego.get(pos).setCantidadNiveles(niveles);
                 }
                 break;
             case "3":
@@ -539,7 +533,7 @@ public class JuegoPrincipal {
                 String decision= entrada.nextLine();
                 switch (decision){
                     case "Y":
-                        for (Materia m : materias){
+                        for (Materia m : materiasJuego){
                             if (m.getNombre().equals(materiaAdesactivar)){
                                 m.setActivo(false);
                             }
@@ -553,7 +547,7 @@ public class JuegoPrincipal {
                 System.out.println("Ingrese Materia");
                 String materiaIngresada= entrada.nextLine();
                 Materia mat = getMateriaConNombre(materiaIngresada);
-                if (materiasA(materias,materiaIngresada)){
+                if (materiasA(materiasJuego,materiaIngresada)){
                     System.out.println("Ingrese el año del Termino Academico");
                     String anioTerm= entrada.nextLine();
 
@@ -563,7 +557,7 @@ public class JuegoPrincipal {
 
                     System.out.println("Ingrese Numero de paralelo");
                     String numeroParalelo= entrada.nextLine();
-                    paralelos.add(new Paralelo(numeroParalelo,mat,new Termino(anioTerm,numTerm)));
+                    paralelosJuego.add(new Paralelo(numeroParalelo,mat,new Termino(anioTerm,numTerm)));
                 }
 
 
@@ -571,9 +565,9 @@ public class JuegoPrincipal {
             case "5":
                 //MOSTRAR PARALELOS EXISTENTES
                 ArrayList<Paralelo> parElim = new ArrayList<>();
-                for (Paralelo p: paralelos){
+                for (Paralelo p: paralelosJuego){
                     int i=1;
-                    if(materiasA(materias,p.getMateria().getNombre())){
+                    if(materiasA(materiasJuego,p.getMateria().getNombre())){
                         System.out.println(i+".- "+p);
                         i++;
                         parElim.add(p);
@@ -582,7 +576,7 @@ public class JuegoPrincipal {
                 System.out.println("Seleccionar paralelo a eliminar");
                 int seleccion=entrada.nextInt();
                 entrada.nextLine();
-                paralelos.remove(parElim.get(seleccion - 1));
+                paralelosJuego.remove(parElim.get(seleccion - 1));
                 break;//case 5MATERIAS Y PARALELO
             default:
                 System.out.println("Ingresar una opcion correcta");
@@ -606,29 +600,29 @@ public class JuegoPrincipal {
                 System.out.println("Ingresar numero de termino");
                 String numeroTermino= entrada.nextLine();
                 Termino term = new Termino(anio,numeroTermino);
-                terminosacad.add(term);
+                terminos_existentes.add(term);
                 break;
             case "2":
                 int i=1;
                 System.out.println("Los terminos existentes son: ");
-                for (Termino t:terminosacad){
+                for (Termino t:terminos_existentes){
                     System.out.println(i+". "+ t);
                     ++i;
                 }
                 System.out.println("Ingrese el numero del termino a eliminar");
                 int termElim = entrada.nextInt();
                 entrada.nextLine();
-                terminosacad.remove(termElim-1);
+                terminos_existentes.remove(termElim-1);
             //ELIMINAR TERMINO
                 break;
             case "3":
                 int j=1;
-                 for (Termino t:terminosacad){
+                 for (Termino t:terminos_existentes){
                     System.out.println(j+". "+ t);
                     ++j;}
                 int elegir = entrada.nextInt();
                 entrada.nextLine();
-                terminoJuegonu=terminosacad.get(elegir-1);
+                terminoJuegonu=terminos_existentes.get(elegir-1);
 
                  break;
             default:
@@ -674,7 +668,7 @@ public class JuegoPrincipal {
                 System.out.println("Ingrese Codigo Materia");
                 String codMateria= entrada.nextLine();
                 String nombre = obtNombreConCod(codMateria);
-                if (materiasA(materias,nombre)){
+                if (materiasA(materiasJuego,nombre)){
                     ArchPreguntas ej = new ArchPreguntas(nombre);
                     ej.leerArchivo();
                     Collections.sort(ej.preguntas);
@@ -691,7 +685,7 @@ public class JuegoPrincipal {
                 System.out.println("Ingrese Codigo Materia");
                 String materiaAgregar= entrada.nextLine();
                 String nombreMat = obtNombreConCod(materiaAgregar);
-                if(materiasA(materias,nombreMat)){
+                if(materiasA(materiasJuego,nombreMat)){
                     ArchPreguntas archp = new ArchPreguntas(nombreMat);
                     archp.leerArchivo();
 
@@ -738,7 +732,7 @@ public class JuegoPrincipal {
 
     public Materia getMateriaConNombre(String nombre){
         Materia obMat = null;
-        for (Materia mtr : materias){
+        for (Materia mtr : materiasJuego){
             if (mtr.getNombre().equals(nombre)){
                 obMat = mtr;
             }
@@ -768,7 +762,7 @@ public class JuegoPrincipal {
     
     public String obtNombreConCod ( String codigo){
         String nombre = null;
-        for(Materia m:materias){
+        for(Materia m:materiasJuego){
             if (m.getCodigo().equals(codigo)){
                 nombre= m.getNombre();
             }
