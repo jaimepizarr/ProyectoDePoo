@@ -25,10 +25,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings("InitializerMayBeStatic")
-public class QuienQuiereSerMillonario {
+public class JuegoPrincipal {
     Scanner entrada = new Scanner(System.in);
-    private ArrayList<TerminoAcademico> terminos = new ArrayList<>();
-    private TerminoAcademico terminoJuego;
+    private ArrayList<TerminoAcademico> terminosacad = new ArrayList<>();
+    private TerminoAcademico terminoJuegonu;
     private ArrayList<Materia> materias = new ArrayList<>();
     private ArrayList<Paralelo> paralelos = new ArrayList<>();
     private ArrayList<Reporte> reportes =new ArrayList<>();
@@ -37,7 +37,7 @@ public class QuienQuiereSerMillonario {
         /*int numero = (int) ((Math.random() * 5) + 1);
         System.out.println(numero);*/
 
-        QuienQuiereSerMillonario game = new QuienQuiereSerMillonario();
+        JuegoPrincipal game = new JuegoPrincipal();
         game.menu();
 
     }//main
@@ -60,12 +60,12 @@ public class QuienQuiereSerMillonario {
                 break;//CASE1 PRINCIPAL
             //NUEVO JUEGO
             case "2":
-                if(terminoJuego != null){
+                if(terminoJuegonu != null){
                     System.out.println("JUEGO NUEVO");
                     //Materia
                     System.out.println("Ingrese Materia");
-                    String nombMateria= entrada.nextLine();
-                    BancoPregunta aprob = new BancoPregunta(nombMateria);
+                    String nombreMateria= entrada.nextLine();
+                    BancoPregunta aprob = new BancoPregunta(nombreMateria);
                     aprob.leerArchivo();
 
 
@@ -85,17 +85,17 @@ public class QuienQuiereSerMillonario {
                     }
                     //Preguntas por nivel
                     
-                    Materia mat = getMateriaConNombre(nombMateria);
+                    Materia mat = getMateriaConNombre(nombreMateria);
                     String entry = "a";
                     
                     
                     
-                    int numeroNivel=0;
+                    int numNivel=0;
                     while(entry == "a"){
                         System.out.println("Ingrese el numero de preguntas por nivel");
-                        numeroNivel= entrada.nextInt();
+                        numNivel= entrada.nextInt();
                         entrada.nextLine();
-                        if(verificacion(aprob.preguntas,numeroNivel,mat)){
+                        if(verificacion(aprob.preguntas,numNivel,mat)){
                             entry="b";
                         }
                         else{
@@ -104,13 +104,13 @@ public class QuienQuiereSerMillonario {
                         }
                     }
                     
-                    ArrayList<Integer> saltosPreg= saltosPreguntas(aprob.preguntas,numeroNivel, mat);
+                    ArrayList<Integer> saltosPreg= saltosPreguntas(aprob.preguntas,numNivel, mat);
                     ArrayList<Pregunta> PregSegunCantNivel = new ArrayList<>();
                     
                     ArrayList<Pregunta> copia = new ArrayList<>();
                     copia= (ArrayList)aprob.preguntas.clone();
                     for (int j:saltosPreg){
-                        for (int k =0; k<numeroNivel;k++){
+                        for (int k =0; k<numNivel;k++){
                                 PregSegunCantNivel.add(copia.get(k));
                                 copia.remove(k);
                         }
@@ -143,7 +143,7 @@ public class QuienQuiereSerMillonario {
 
 
                 //SALE E INICIA EL JUEGO
-                    System.out.println("QUIEN QUIERE SER MILLONARIO ESTUDIANTIL");
+                    System.out.println("¿QUIEN QUIERE SER MILLONARIO? ESTUDIANTIL");
                     System.out.println("Bienvenido "+ participante+"!!");
                     System.out.println("Presiona una tecla para continuar");
                     String nextXt=entrada.nextLine();
@@ -254,14 +254,16 @@ public class QuienQuiereSerMillonario {
                                 puntos++;
                                 
                             }
-                            int nivelAlcanzado =(int) Math.floor(puntos/numeroNivel);
+                            int nivelAlcanzado =(int) Math.floor(puntos/numNivel);
                         //
                             try {
                                   //MOSRTAR INGFORMACION AQUI
-                                  generarCsvReporte( terminoJuego,paraleloAjugar ,mat.getCodigo());
+                                  generarCsvReporte(terminoJuegonu,paraleloAjugar ,mat.getCodigo());
                                 } catch (IOException ex) {
-                                  Logger.getLogger(QuienQuiereSerMillonario.class.getName()).log(Level.SEVERE, null, ex);
+                                  Logger.getLogger(JuegoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
                                 } 
+                          
+                          // 
                           
                           //
                             }
@@ -322,7 +324,7 @@ public class QuienQuiereSerMillonario {
            //MOSRTAR INGFORMACION AQUI
            generarCsvReporte( termino,paral ,codigoMateria);
        } catch (IOException ex) {
-           Logger.getLogger(QuienQuiereSerMillonario.class.getName()).log(Level.SEVERE, null, ex);
+           Logger.getLogger(JuegoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
        }
     }
     public void configuraciones(){
@@ -429,7 +431,7 @@ public class QuienQuiereSerMillonario {
                 System.out.println("Ingrese Materia");
                 String materiaIngresada= entrada.nextLine();
                 Materia mat = getMateriaConNombre(materiaIngresada);
-                if (materiasActivas(materias,materiaIngresada)){
+                if (materiasA(materias,materiaIngresada)){
                     System.out.println("Ingrese el año del Termino Academico");
                     String anioTerm= entrada.nextLine();
 
@@ -449,7 +451,7 @@ public class QuienQuiereSerMillonario {
                 ArrayList<Paralelo> parElim = new ArrayList<>();
                 for (Paralelo p: paralelos){
                     int i=1;
-                    if(materiasActivas(materias,p.getMateria().getNombre())){
+                    if(materiasA(materias,p.getMateria().getNombre())){
                         System.out.println(i+".- "+p);
                         i++;
                         parElim.add(p);
@@ -482,29 +484,29 @@ public class QuienQuiereSerMillonario {
                 System.out.println("Ingresar numero de termino");
                 String numeroTermino= entrada.nextLine();
                 TerminoAcademico term = new TerminoAcademico(anio,numeroTermino);
-                terminos.add(term);
+                terminosacad.add(term);
                 break;
             case "2":
                 int i=1;
                 System.out.println("Los terminos existentes son: ");
-                for (TerminoAcademico t:terminos){
+                for (TerminoAcademico t:terminosacad){
                     System.out.println(i+". "+ t);
                     ++i;
                 }
                 System.out.println("Ingrese el numero del termino a eliminar");
                 int termElim = entrada.nextInt();
                 entrada.nextLine();
-                terminos.remove(termElim-1);
+                terminosacad.remove(termElim-1);
             //ELIMINAR TERMINO
                 break;
             case "3":
                 int j=1;
-                 for (TerminoAcademico t:terminos){
+                 for (TerminoAcademico t:terminosacad){
                     System.out.println(j+". "+ t);
                     ++j;}
                 int elegir = entrada.nextInt();
                 entrada.nextLine();
-                terminoJuego=terminos.get(elegir-1);
+                terminoJuegonu=terminosacad.get(elegir-1);
 
                  break;
             default:
@@ -526,8 +528,8 @@ public class QuienQuiereSerMillonario {
         String codigoMateria= entrada.nextLine();
         Materia materia = new Materia(codigoMateria);
         
-        TerminoAcademico termEst = new TerminoAcademico(anioTerm,numTerm);
-        Paralelo paralelEst = new Paralelo(paralelo,materia,termEst);
+        TerminoAcademico estermac = new TerminoAcademico(anioTerm,numTerm);
+        Paralelo paralelEst = new Paralelo(paralelo,materia,estermac);
         paralelEst.leerArchivoEstudiantes();
         ArrayList<Estudiante> listEst= paralelEst.getEstudiantes();
         for(Estudiante e: listEst){
@@ -547,9 +549,9 @@ public class QuienQuiereSerMillonario {
 
             case "1":
                 System.out.println("Ingrese Codigo Materia");
-                String codigoMateria= entrada.nextLine();
-                String nombre = obtNombreConCod(codigoMateria);
-                if (materiasActivas(materias,nombre)){
+                String codMateria= entrada.nextLine();
+                String nombre = obtNombreConCod(codMateria);
+                if (materiasA(materias,nombre)){
                     BancoPregunta ej = new BancoPregunta(nombre);
                     ej.leerArchivo();
                     Collections.sort(ej.preguntas);
@@ -566,9 +568,9 @@ public class QuienQuiereSerMillonario {
                 System.out.println("Ingrese Codigo Materia");
                 String materiaAgregar= entrada.nextLine();
                 String nombreMat = obtNombreConCod(materiaAgregar);
-                if(materiasActivas(materias,nombreMat)){
-                    BancoPregunta ej = new BancoPregunta(nombreMat);
-                    ej.leerArchivo();
+                if(materiasA(materias,nombreMat)){
+                    BancoPregunta archp = new BancoPregunta(nombreMat);
+                    archp.leerArchivo();
 
                     System.out.println("Ingrese Enunciado de la pregunta");
                     String enunciado= entrada.nextLine();
@@ -580,58 +582,58 @@ public class QuienQuiereSerMillonario {
                     String respuestaCorrecta= entrada.nextLine();
 
                     System.out.println("Ingrese Posible Respuesta 1");
-                    String respuesta1= entrada.nextLine();
+                    String respuestaInc1= entrada.nextLine();
 
                     System.out.println("Ingrese Posible Respuesta 2");
-                    String respuesta2= entrada.nextLine();
+                    String respuestaInc2= entrada.nextLine();
 
                     System.out.println("Ingrese Posible Respuesta 3");
-                    String respuesta3= entrada.nextLine();
+                    String respuestaInc3= entrada.nextLine();
 
-                    Pregunta preguntaAgg= new Pregunta(enunciado, nivel , respuestaCorrecta, respuesta1, respuesta2, respuesta3);
-                    ej.preguntas.add(preguntaAgg);
+                    Pregunta preguntaAgg= new Pregunta(enunciado, nivel , respuestaCorrecta, respuestaInc1, respuestaInc2, respuestaInc3);
+                    archp.preguntas.add(preguntaAgg);
                     //ALMACENAR PREGUNTAS EN CSV NOMBRE CODIGO DE LA MATERIA
-                    ej.actualizarArchivo();
+                    archp.actualizarArchivo();
                     }
 
                 break;
             case"3":
                 System.out.println("Ingrese el nombre de la Materia");
                 String subject = entrada.nextLine();
-                BancoPregunta ej = new BancoPregunta(subject);
-                ej.leerArchivo();
+                BancoPregunta ap = new BancoPregunta(subject);
+                ap.leerArchivo();
                 System.out.println("Que pregunta desea eliminar");
                 int k=1;
-                for(Pregunta p:ej.preguntas){
+                for(Pregunta p:ap.preguntas){
                     System.out.println(k+".- "+p);
                     k++;
                 }
                 int  eliminar= entrada.nextInt();
-                ej.preguntas.remove((eliminar-1));
-                ej.actualizarArchivo();}//switchAdmisitrar preguntar
+                ap.preguntas.remove((eliminar-1));
+                ap.actualizarArchivo();}//switchAdmisitrar preguntar
     }
 
     public Materia getMateriaConNombre(String nombre){
-        Materia mat = null;
-        for (Materia m : materias){
-            if (m.getNombre().equals(nombre)){
-                mat = m;
+        Materia obMat = null;
+        for (Materia mtr : materias){
+            if (mtr.getNombre().equals(nombre)){
+                obMat = mtr;
             }
         }
-        return mat;
+        return obMat;
     }
 
    
     
-    public boolean materiasActivas(ArrayList<Materia> mat, String nombreMat){
-        ArrayList<Materia> matAct= new ArrayList<>();
-        for(Materia m: mat){
-            if (m.isActivo()){
-                matAct.add(m);
+    public boolean materiasA(ArrayList<Materia> mat, String nombreMat){
+        ArrayList<Materia> materiatAct= new ArrayList<>();
+        for(Materia mtr: mat){
+            if (mtr.isActivo()){
+                materiatAct.add(mtr);
             }
         }
         boolean bool = true;
-        for(Materia m1:matAct){
+        for(Materia m1:materiatAct){
             if (!(m1.getNombre().equals(nombreMat))){
                 bool = false;
             }
@@ -672,8 +674,8 @@ public class QuienQuiereSerMillonario {
     }
 
     private Estudiante getRandomEstudiantes(ArrayList<Estudiante> est) {
-        Random aleatorio = new Random(System.currentTimeMillis());
-        int numAleatorio = aleatorio.nextInt(est.size());
+        Random posAle = new Random(System.currentTimeMillis());
+        int numAleatorio = posAle.nextInt(est.size());
         
         return est.get(numAleatorio);
     }
@@ -685,17 +687,17 @@ public class QuienQuiereSerMillonario {
 
     public boolean verificacion (ArrayList<Pregunta> preguntas, int numPreguntas,Materia materia){
         ArrayList<String> niveles= new ArrayList<>();
-        for (Pregunta p : preguntas){
-            niveles.add(p.getNivel());
+        for (Pregunta pregun : preguntas){
+            niveles.add(pregun.getNivel());
         }
-        int cantNivelMat = materia.getCantidadNiveles();
+        int cantniMateria = materia.getCantidadNiveles();
         ArrayList<Integer> frecuencia = new ArrayList<>();
         
-        boolean bool = true;
+        boolean condi = true;
         
-        for (int i=1; i<=cantNivelMat;i++){
-            String j= i+"";
-            int frequency = Collections.frequency(niveles,j);
+        for (int cantidad=1; cantidad<=cantniMateria;cantidad++){
+            String valor= cantidad+"";
+            int frequency = Collections.frequency(niveles,valor);
             frecuencia.add(frequency);
 
             /*if (frequency < numPreguntas){
@@ -705,10 +707,10 @@ public class QuienQuiereSerMillonario {
         int min = Collections.min(frecuencia);
 
         if (min<numPreguntas){ 
-            bool = false;
+            condi = false;
         }
         
-        return bool;
+        return condi;
     }
 
     public ArrayList<Integer> saltosPreguntas(ArrayList<Pregunta> preguntas, int numPreguntas, Materia materia){
@@ -727,19 +729,19 @@ public class QuienQuiereSerMillonario {
     }
     public String nombreporMatricula(ArrayList<Estudiante> est){
         System.out.println("Ingrese su matricula:");
-        String matriculaEstudiante= entrada.nextLine();
+        String matriculaest= entrada.nextLine();
         String nombEst = null;
         for (Estudiante e: est){
-            if (e.getMatricula().equals(matriculaEstudiante)){
+            if (e.getMatricula().equals(matriculaest)){
                 nombEst = e.getNombre();
             }
         }
         return nombEst;
     }    
     public String nombreporAleatorio(ArrayList<Estudiante> est){
-        Estudiante participar = getRandomEstudiantes(est);
-        String nombreEstudiante= participar.getNombre();
-        return nombreEstudiante;
+        Estudiante alestudiante = getRandomEstudiantes(est);
+        String nomEstudiante= alestudiante.getNombre();
+        return nomEstudiante;
         }
         
     }
