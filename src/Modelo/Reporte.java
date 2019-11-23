@@ -17,20 +17,15 @@ import java.util.logging.Logger;
  */
 public class Reporte implements Comparable<Reporte> {
     
-    private Date fechaDeljuego;
+    private String fechaDeljuego;
     private Estudiante  participante;
     private String niveMaximoAlcanzado;
     private String premio;
     private String nombreParticipante;
 
-    public Reporte(Date fechaDeljuego, Estudiante participante, String niveMaximoAlcanzado, String premio) {
-        this.fechaDeljuego = fechaDeljuego;
-        this.participante = participante;
-        this.niveMaximoAlcanzado = niveMaximoAlcanzado;
-        this.premio = premio;
-    }
 
-    public Reporte(Date fechaDeljuego, String niveMaximoAlcanzado, String premio, String nombreParticipante) {
+
+    public Reporte(String fechaDeljuego, String niveMaximoAlcanzado, String premio, String nombreParticipante) {
         this.fechaDeljuego = fechaDeljuego;
         this.niveMaximoAlcanzado = niveMaximoAlcanzado;
         this.premio = premio;
@@ -46,11 +41,11 @@ public class Reporte implements Comparable<Reporte> {
     }
     
 
-    public Date getFechaDeljuego() {
+    public String getFechaDeljuego() {
         return fechaDeljuego;
     }
 
-    public void setFechaDeljuego(Date fechaDeljuego) {
+    public void setFechaDeljuego(String fechaDeljuego) {
         this.fechaDeljuego = fechaDeljuego;
     }
 

@@ -1,7 +1,7 @@
 
 package quienquieresermillonario;
-import Modelo.ArchEstudiantes;
-import Modelo.ArchPreguntas;
+import clasesArch.ArchEstudiantes;
+import clasesArch.ArchPreguntas;
 import Modelo.Estudiante;
 import Modelo.Materia;
 import Modelo.Paralelo;
@@ -9,6 +9,7 @@ import Modelo.Pregunta;
 import Modelo.Reporte;
 import Modelo.Termino;
 import Utileria.Comodin;
+import java.io.File;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import java.util.logging.Logger;
 public class JuegoPrincipal {
     Scanner entrada = new Scanner(System.in);
     private ArrayList<Termino> terminos_existentes = new ArrayList<>();
-    private Termino terminoJuegonu;
+    private Termino terminosJuego;
     private ArrayList<Materia> materiasJuego = new ArrayList<>();
     private ArrayList<Paralelo> paralelosJuego = new ArrayList<>();
     private ArrayList<Reporte> reportes =new ArrayList<>();
@@ -60,7 +61,7 @@ public class JuegoPrincipal {
                 configuraciones();
                 break;
             case "2":
-                if(terminoJuegonu != null){
+                if(terminosJuego != null){
                     System.out.println("JUEGO NUEVO");
                     //Materia
                     System.out.println("Ingrese Materia");
@@ -366,27 +367,30 @@ public class JuegoPrincipal {
                             }
 
                     }
-                
-
-                        //
-                    try {
-                          //MOSRTAR INGFORMACION AQUI
-                          generarCsvReporte(terminoJuegonu,paraleloJuego ,mat.getCodigo());
-                        } catch (IOException ex) {
-                          Logger.getLogger(JuegoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                        }
                     int nivelAlcanzado =(int) Math.floor(puntos/numNivel);
                     String nivel = Integer.toString(nivelAlcanzado);
                     Date hoy = new Date();
-
                     if (nivelAlcanzado >= 1){
                         System.out.println("Ingrese el premio del participante");
                         premio = entrada.nextLine();
 
                     }
 
-                    Reporte repJuego = new Reporte (hoy,nivel,premio,participante);
-                    entryMP="4";
+                    Reporte repJuego = new Reporte (hoy.toString(),nivel,premio,participante);
+                    reportes.add(repJuego);
+                    entryMP="4";                    
+
+                    
+                    
+                    try {
+                          //MOSRTAR INGFORMACION AQUI
+                          generarCsvReporte(terminosJuego,paraleloJuego ,mat.getCodigo(),repJuego);
+                        } catch (IOException ex) {
+                          Logger.getLogger(JuegoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    actualizarArchivoReporte(mat.getCodigo(),paraleloJuego.getParaleloCod(),terminosJuego.getAnio() ,terminosJuego.getNumero());
+
+
                 break;
                 
                 
@@ -436,12 +440,12 @@ public class JuegoPrincipal {
         Paralelo paral = new Paralelo( paraleloReport, codigoMateria, termino);
 
 
-       try {
+       /*try {
            //MOSRTAR INGFORMACION AQUI
            generarCsvReporte( termino,paral ,codigoMateria);
        } catch (IOException ex) {
            Logger.getLogger(JuegoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-       }
+       }*/
     }
     public void configuraciones(){
         String ii= "a";
@@ -622,7 +626,7 @@ public class JuegoPrincipal {
                     ++j;}
                 int elegir = entrada.nextInt();
                 entrada.nextLine();
-                terminoJuegonu=terminos_existentes.get(elegir-1);
+                terminosJuego=terminos_existentes.get(elegir-1);
 
                  break;
             default:
@@ -772,10 +776,10 @@ public class JuegoPrincipal {
     public void actualizarArchivoReporte(String materia,String paralelo,String anio ,String numero) {//// OJO HACER ESTO
         FileWriter writer = null;
         try {
-            String ruta = "src/archivos/reportes"+materia+"-"+paralelo+ "-"+anio+"-"+numero+"-R"+".csv"; //ruta del archivo que se va a leer
+            String ruta = "src/archivos/reportes/"+materia+"-"+paralelo+ "-"+anio+"-"+numero+"-R"+".csv"; //ruta del archivo que se va a leer
             writer = new FileWriter(ruta);
             for (Reporte est :reportes ) {
-                writer.write(est.getFechaDeljuego()+ ";" + est.getParticipante().getNombre()+ ";" + est.getNiveMaximoAlcanzado()+";"+ est.getPremio()+System.lineSeparator());
+                writer.write(est.getFechaDeljuego()+ ";" + est.getNombreParticipante()+ ";" + est.getNiveMaximoAlcanzado()+";"+ est.getPremio()+System.lineSeparator());
             }
             writer.close();
         } catch (IOException ex) {
@@ -797,10 +801,13 @@ public class JuegoPrincipal {
         return est.get(numAleatorio);
     }
 
-    public void generarCsvReporte(Termino termino,Paralelo paralelo, String materia) throws IOException{
+    public void generarCsvReporte(Termino termino,Paralelo paralelo, String materia,Reporte reporte) throws IOException{
         String archivoCSV = "src/archivos/reportes/"+materia+"-"+paralelo.getParaleloCod()+ "-"+termino.getAnio()+"-"+termino.getNumero()+"-R"+".csv";
         Writer writer = Files.newBufferedWriter(Paths.get(archivoCSV));
+
     }
+    
+
 
     public boolean verificacion (ArrayList<Pregunta> preguntas, int numPreguntas,Materia materia){
         ArrayList<String> niveles= new ArrayList<>();

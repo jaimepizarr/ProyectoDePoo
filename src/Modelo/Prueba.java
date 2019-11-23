@@ -18,5 +18,6 @@ public class Prueba {
         Calendar c1 = Calendar.getInstance();
         System.out.println(Integer.toString(c1.get(Calendar.DATE)));
         Date fecha = new Date();
+        System.out.println(fecha.toString());
     }
 }

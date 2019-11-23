@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Modelo;
+package clasesArch;
 
 
+import Modelo.Pregunta;
 import Modelo.Pregunta;
 import java.io.BufferedReader;
 import java.io.BufferedReader;
