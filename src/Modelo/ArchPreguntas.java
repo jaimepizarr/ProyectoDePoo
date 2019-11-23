@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Settings;
+package Modelo;
 
 
+import Modelo.Pregunta;
 import java.io.BufferedReader;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -21,16 +22,16 @@ import java.util.logging.Logger;
  *
  * @author josephAvila
  */
-public class BancoPregunta {
+public class ArchPreguntas {
     
     public ArrayList<Pregunta> preguntas;
     public String materia;
 
-    public BancoPregunta(String materia) {
+    public ArchPreguntas(String materia) {
         preguntas = new ArrayList<Pregunta>();
         this.materia = materia;
     }
-    public BancoPregunta(){
+    public ArchPreguntas(){
         preguntas= new ArrayList<Pregunta>();
     }
 
@@ -53,14 +54,14 @@ public class BancoPregunta {
 
             }
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(BancoPregunta.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchPreguntas.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(BancoPregunta.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchPreguntas.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 csvReader.close();
             } catch (IOException ex) {
-                Logger.getLogger(BancoPregunta.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ArchPreguntas.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -75,16 +76,16 @@ public class BancoPregunta {
             String ruta = "src/archivos/preguntas"+materia+".csv"; //ruta del archivo que se va a leer
             writer = new FileWriter(ruta);
             for (Pregunta est : preguntas) {
-                writer.write(est.getEnunciado()+ "," + est.getNivel()+ "," + est.getRepuesta_correcta()+","+ est.getRepuesta_correcta()+","+est.getPosible_respuesta1()+","+est.getPosible_respuesta2()+","+est.getPosible_respuesta4()+System.lineSeparator());
+                writer.write(est.getEnunciado()+ "," + est.getNivel()+ "," + est.getrCorrecta()+","+ est.getrCorrecta()+","+est.getRespInc1()+","+est.getRespInc2()+","+est.getRespInc3()+System.lineSeparator());
             }
             writer.close();
         } catch (IOException ex) {
-            Logger.getLogger(BancoPregunta.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchPreguntas.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 writer.close();
             } catch (IOException ex) {
-                Logger.getLogger(BancoPregunta.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ArchPreguntas.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 

@@ -1,12 +1,13 @@
 
 package quienquieresermillonario;
-import Settings.BancoPregunta;
-import Settings.Estudiante;
-import Settings.Materia;
-import Settings.Paralelo;
-import Settings.Pregunta;
-import Settings.Reporte;
-import Settings.TerminoAcademico;
+import Modelo.ArchEstudiantes;
+import Modelo.ArchPreguntas;
+import Modelo.Estudiante;
+import Modelo.Materia;
+import Modelo.Paralelo;
+import Modelo.Pregunta;
+import Modelo.Reporte;
+import Modelo.Termino;
 import Utileria.Comodin;
 
 import java.io.FileWriter;
@@ -18,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Random;
 
 import java.util.Scanner;
@@ -27,11 +29,13 @@ import java.util.logging.Logger;
 @SuppressWarnings("InitializerMayBeStatic")
 public class JuegoPrincipal {
     Scanner entrada = new Scanner(System.in);
-    private ArrayList<TerminoAcademico> terminosacad = new ArrayList<>();
-    private TerminoAcademico terminoJuegonu;
+    private ArrayList<Termino> terminosacad = new ArrayList<>();
+    private Termino terminoJuegonu;
     private ArrayList<Materia> materias = new ArrayList<>();
     private ArrayList<Paralelo> paralelos = new ArrayList<>();
     private ArrayList<Reporte> reportes =new ArrayList<>();
+    private Paralelo paraleloJuego =null;
+    private String premio = "";
 
     public static void main(String[] args) {
         /*int numero = (int) ((Math.random() * 5) + 1);
@@ -41,17 +45,15 @@ public class JuegoPrincipal {
         game.menu();
 
     }//main
-//holaaaa
 
 
     public void menu(){
-        String i= "a";
-        while (i!="4"){
+        String entryMP= "a";
+        while (entryMP!="4"){
            System.out.println("SELECCIONE UNA OPCION PARA INICIAR\n1. Configuraciones\n" +
            "2. Nuevo juego\n" +
            "3. Reporte\n" +
            "4. Salir");
-           Paralelo paraleloAjugar =null;
            String opcion= entrada.nextLine();
             switch (opcion){
             //CONFIGURACIONES
@@ -65,7 +67,7 @@ public class JuegoPrincipal {
                     //Materia
                     System.out.println("Ingrese Materia");
                     String nombreMateria= entrada.nextLine();
-                    BancoPregunta aprob = new BancoPregunta(nombreMateria);
+                    ArchPreguntas aprob = new ArchPreguntas(nombreMateria);
                     aprob.leerArchivo();
 
 
@@ -76,8 +78,9 @@ public class JuegoPrincipal {
                     for (Paralelo p:paralelos){
                        
                         if (p.getParaleloCod().equals(paralelo)){
-                            paraleloAjugar=p;
-                            p.leerArchivoEstudiantes();
+                            paraleloJuego=p;
+                            ArchEstudiantes arEst= new ArchEstudiantes(p);
+                            arEst.leerArchivoEstudiantes();
                             for(Estudiante student :p.getEstudiantes()){
                                 est.add(student);
                             }
@@ -86,6 +89,7 @@ public class JuegoPrincipal {
                     //Preguntas por nivel
                     
                     Materia mat = getMateriaConNombre(nombreMateria);
+                    
                     String entry = "a";
                     
                     
@@ -146,27 +150,21 @@ public class JuegoPrincipal {
                     System.out.println("¿QUIEN QUIERE SER MILLONARIO? ESTUDIANTIL");
                     System.out.println("Bienvenido "+ participante+"!!");
                     System.out.println("Presiona una tecla para continuar");
-                    String nextXt=entrada.nextLine();
+                    entrada.nextLine();
                     aprob.leerArchivo();
+                    
                     ArrayList<String> comodines = new ArrayList<>();
                     for (Comodin com: Comodin.values()){
                         comodines.add(com.name());
+                        System.out.println(com.name());
                     }
                     int puntos=0;
+                    /*
                     int salir = 0;
                     
                     while (salir!=1){
                         for(Pregunta mostrar:aprob.preguntas){
-                            //ArrayList<String> respCorrecta = new ArrayList<>();
-                            //respCorrecta.add(mostrar.getRepuesta_correcta());
-                            /*
-                            ArrayList<String> respuestas = new ArrayList<>();
-                            respuestas.add(mostrar.getPosible_respuesta1());
-                            respuestas.add(mostrar.getPosible_respuesta2());
-                            respuestas.add(mostrar.getPosible_respuesta4());
-                            respuestas.add(mostrar.getRepuesta_correcta());
-                            
-                            */
+
                             ArrayList<String> letras =new ArrayList<>();
                             letras.add("A");
                             letras.add("B");
@@ -174,18 +172,18 @@ public class JuegoPrincipal {
                             letras.add("D");
                             
                             ArrayList<String> respIncorrectas = new ArrayList<>();
-                            respIncorrectas.add(mostrar.getPosible_respuesta1());
-                            respIncorrectas.add(mostrar.getPosible_respuesta2());
-                            respIncorrectas.add(mostrar.getPosible_respuesta4());
+                            respIncorrectas.add(mostrar.getRespInc1());
+                            respIncorrectas.add(mostrar.getRespInc2());
+                            respIncorrectas.add(mostrar.getRespInc3());
                             
                             ArrayList<String> respuestas = new ArrayList<>();
                             for(String rIn:respIncorrectas){
                                 respuestas.add(rIn);
                             }
-                            respuestas.add(mostrar.getRepuesta_correcta());
+                            respuestas.add(mostrar.getrCorrecta());
                             Collections.shuffle(respuestas);
                             
-                            int index=respuestas.indexOf(mostrar.getRepuesta_correcta());
+                            int index=respuestas.indexOf(mostrar.getrCorrecta());
                             String letraCorrecta= letras.get(index);
                             
                             System.out.println(mostrar.getEnunciado());
@@ -193,32 +191,24 @@ public class JuegoPrincipal {
                                 System.out.println(letras.get(p)+".- "+respuestas.get(p));
                             }
                             
-                            /*
-                            System.out.println("P: "+mostrar.getEnunciado());
-                            System.out.println("A.-"+respuestas.get(0));
-                            System.out.println("B.-"+respuestas.get(1));
-                            System.out.println("C.-"+respuestas.get(2));
-                            System.out.println("D.-"+respuestas.get(3));
-                            System.out.println("Ingrese la letra de la respuesta elegida");
-*/
+                            
                             String repuestaElegida= entrada.nextLine();
                             if((!repuestaElegida.toUpperCase().equals(letraCorrecta)) &&(!repuestaElegida.equals("*")) ){
                                 System.out.println("Perdiste");
                                 System.out.println("FIN DEL JUEGO");
                                 salir=1;
-                                i="4";
-                                break;
-                                        
                                 
-
-                                }
+                                break;
+                            }    
+                            
+                                    
                             int n =0;
                             while (n!=4){
                             
                             
                             if(repuestaElegida.equals("*")){
                                 System.out.println("Comodines: ");
-                                int k=0;
+                                int k=1;
                                 for(String c: comodines){
                                     System.out.println(k+".- "+c);
                                     k++;
@@ -232,11 +222,18 @@ public class JuegoPrincipal {
                                     case 1:
                                         
                                         Random aleatorio = new Random(System.currentTimeMillis());
-                                        int numAleatorio1 = aleatorio.nextInt(respIncorrectas.size()-1);
-                                        respIncorrectas.remove(numAleatorio1);
-                                        respIncorrectas.remove((numAleatorio1)-1);
-                                        letras.remove("C");
-                                        letras.remove("D");
+                                        int numAleatorio1 = aleatorio.nextInt(respIncorrectas.size());
+                                        //respIncorrectas.remove(numAleatorio1);
+                                        //letras.remove("C");
+                                        
+                                        int numAleatorio2 = aleatorio.nextInt(respIncorrectas.size());
+                                        //respIncorrectas.remove(numAleatorio2);
+                                        //letras.remove("D");
+                                        String incorrecta1 = respIncorrectas.get(numAleatorio1);
+                                        String incorrecta2 = respIncorrectas.get(numAleatorio2);
+                                        System.out.println("La opcion: " +incorrecta1 + " es incorrecta");
+                                        System.out.println("La opcion: " +incorrecta2 + " es tambien incorrecta");
+                                        
                                         break;
                                         
                                     case 2:
@@ -245,44 +242,169 @@ public class JuegoPrincipal {
                                     
                                     case 3:
                                         System.out.println("Ha usado el comodin CONSULTA AL SALON");
+                                } 
+                                System.out.println("Cual es la respuesta correcta?");
+                                repuestaElegida= entrada.nextLine();
+                                if((!repuestaElegida.toUpperCase().equals(letraCorrecta)) &&(!repuestaElegida.equals("*")) ){
+                                    System.out.println("Perdiste");
+                                    System.out.println("FIN DEL JUEGO");
+                                    salir=1;
+                                    n=4;
+                                    entryMP="4";
+                                    break;
                                 }
+                                
+                                else if(repuestaElegida.toUpperCase().equals(letraCorrecta)){
+                                    System.out.println("FELICITACIONES! HAZ CONTESTADO CORRECTAMENTE");
+                                    System.out.println("SIGUIENTE PREGUNTA:");
+                                    puntos++;
+                                    n=4;
+                                    break;
+                                }
+                                break;
                             }
                             else if(repuestaElegida.toUpperCase().equals(letraCorrecta)){
                                 System.out.println("FELICITACIONES! HAZ CONTESTADO CORRECTAMENTE");
                                 System.out.println("SIGUIENTE PREGUNTA:");
-                                n=4;
                                 puntos++;
-                                
+                                n=4;
+                            }*/
+                    int n = 0;
+
+                    while (n<aprob.preguntas.size()){
+                            Pregunta mostrar = aprob.preguntas.get(n);
+                            ArrayList<String> letras =new ArrayList<>();
+                            letras.add("A");
+                            letras.add("B");
+                            letras.add("C");
+                            letras.add("D");
+
+                            ArrayList<String> respIncorrectas = new ArrayList<>();
+                            respIncorrectas.add(mostrar.getRespInc1());
+                            respIncorrectas.add(mostrar.getRespInc2());
+                            respIncorrectas.add(mostrar.getRespInc3());
+
+                            ArrayList<String> respuestas = new ArrayList<>();
+                            for(String rIn:respIncorrectas){
+                                    respuestas.add(rIn);
                             }
-                            int nivelAlcanzado =(int) Math.floor(puntos/numNivel);
-                        //
-                            try {
-                                  //MOSRTAR INGFORMACION AQUI
-                                  generarCsvReporte(terminoJuegonu,paraleloAjugar ,mat.getCodigo());
-                                } catch (IOException ex) {
-                                  Logger.getLogger(JuegoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                            respuestas.add(mostrar.getrCorrecta());
+                            Collections.shuffle(respuestas);
+
+                            int index=respuestas.indexOf(mostrar.getrCorrecta());
+                            String letraCorrecta= letras.get(index);
+
+                            System.out.println(mostrar.getEnunciado());
+                            for(int p=0;p<letras.size();p++){
+                                    System.out.println(letras.get(p)+".- "+respuestas.get(p));
+                            }		
+
+                            String repuestaElegida= entrada.nextLine();
+                            if((!repuestaElegida.toUpperCase().equals(letraCorrecta)) &&(!repuestaElegida.equals("*")) ){
+                                    System.out.println("Perdiste");
+                                    System.out.println("FIN DEL JUEGO");
+                                    n=aprob.preguntas.size();
+
+                                    break;
+                            }    
+                            else if(repuestaElegida.toUpperCase().equals(letraCorrecta)){
+                                    System.out.println("FELICITACIONES! HAZ CONTESTADO CORRECTAMENTE");
+                                    System.out.println("SIGUIENTE PREGUNTA:");
+                                    puntos++;
+                                    n++;
+                            }
+
+
+                            else if (repuestaElegida.equals("*")){
+                                System.out.println("Comodines: ");
+                                int k=1;
+                                for(String c: comodines){
+                                        System.out.println(k+".- "+c);
+                                        k++;
+                                }
+
+                                System.out.println("Elija un comodin");
+                                String comElegido= entrada.nextLine();
+
+                                comodines.remove(comElegido);
+                                switch (comElegido){
+                                        case "COMODIN50_50":
+                                                Random aleatorio = new Random(System.currentTimeMillis());
+                                                int numAleatorio1 = aleatorio.nextInt(respIncorrectas.size());
+                                                //respIncorrectas.remove(numAleatorio1);
+                                                //letras.remove("C");
+
+                                                int numAleatorio2 = aleatorio.nextInt(respIncorrectas.size());
+                                                //respIncorrectas.remove(numAleatorio2);
+                                                //letras.remove("D");
+                                                String incorrecta1 = respIncorrectas.get(numAleatorio1);
+                                                String incorrecta2 = respIncorrectas.get(numAleatorio2);
+                                                System.out.println("La opcion: " +incorrecta1 + " es incorrecta");
+                                                System.out.println("La opcion: " +incorrecta2 + " es tambien incorrecta");
+
+
+                                                break;
+
+                                        case "CONSULTA_COMPAÑERO":
+                                                System.out.println("Ha usado el comodin CONSULTA AL COMPAÑERO");
+                                                break;
+
+                                        case "CONSULTA_SALON":
+                                                System.out.println("Ha usado el comodin CONSULTA AL SALON");
                                 } 
-                          
-                          // 
-                          
-                          //
+                                System.out.println("Cual es la respuesta correcta?");
+                                repuestaElegida= entrada.nextLine();
+                                if((!repuestaElegida.toUpperCase().equals(letraCorrecta)) &&(!repuestaElegida.equals("*")) ){
+                                        System.out.println("Perdiste");
+                                        System.out.println("FIN DEL JUEGO");
+                                        n=aprob.preguntas.size();
+                                        break;
+                                }
+
+                                else if(repuestaElegida.toUpperCase().equals(letraCorrecta)){
+                                        System.out.println("FELICITACIONES! HAZ CONTESTADO CORRECTAMENTE");
+                                        System.out.println("SIGUIENTE PREGUNTA:");
+                                        puntos++;
+                                        n++;
+
+                                }
+                                    
                             }
-                
-                        }
+
                     }
                 
+
+                        //
+                    try {
+                          //MOSRTAR INGFORMACION AQUI
+                          generarCsvReporte(terminoJuegonu,paraleloJuego ,mat.getCodigo());
+                        } catch (IOException ex) {
+                          Logger.getLogger(JuegoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    int nivelAlcanzado =(int) Math.floor(puntos/numNivel);
+                    String nivel = Integer.toString(nivelAlcanzado);
+                    Date hoy = new Date();
+
+                    if (nivelAlcanzado >= 1){
+                        System.out.println("Ingrese el premio del participante");
+                        premio = entrada.nextLine();
+
+                    }
+
+                    Reporte repJuego = new Reporte (hoy,nivel,premio,participante);
+                    entryMP="4";
                 break;
                 
-                    //CASE 2 PRINCIPAL//CASE 2 PRINCIPAL
-                }
                 
+                }
+
                 else{
                     System.out.println("Debe configurar el termino");
                     
                 }
-                    
+                
             //REPORTE
-                break;
+                break; //CASE 2 PRINCIPAL//CASE 2 PRINCIPAL
             case "3":
                 
                 menuReporte();
@@ -291,12 +413,12 @@ public class JuegoPrincipal {
 
      //SALIR
             case "4":
-                i="4";
+                entryMP="4";
                 break;
 
            }//swich principal
 
-        }//while principal
+    }//while principal
     }
 
     
@@ -316,7 +438,7 @@ public class JuegoPrincipal {
         //Paralelo
         System.out.println("Ingrese Paralelo");
         String paraleloReport= entrada.nextLine();
-        TerminoAcademico termino = new TerminoAcademico(anioTAcademicoReport,numTAcademicoReport);
+        Termino termino = new Termino(anioTAcademicoReport,numTAcademicoReport);
         Paralelo paral = new Paralelo( paraleloReport, codigoMateria, termino);
 
 
@@ -441,7 +563,7 @@ public class JuegoPrincipal {
 
                     System.out.println("Ingrese Numero de paralelo");
                     String numeroParalelo= entrada.nextLine();
-                    paralelos.add(new Paralelo(numeroParalelo,mat,new TerminoAcademico(anioTerm,numTerm)));
+                    paralelos.add(new Paralelo(numeroParalelo,mat,new Termino(anioTerm,numTerm)));
                 }
 
 
@@ -483,13 +605,13 @@ public class JuegoPrincipal {
                 //numero de termino
                 System.out.println("Ingresar numero de termino");
                 String numeroTermino= entrada.nextLine();
-                TerminoAcademico term = new TerminoAcademico(anio,numeroTermino);
+                Termino term = new Termino(anio,numeroTermino);
                 terminosacad.add(term);
                 break;
             case "2":
                 int i=1;
                 System.out.println("Los terminos existentes son: ");
-                for (TerminoAcademico t:terminosacad){
+                for (Termino t:terminosacad){
                     System.out.println(i+". "+ t);
                     ++i;
                 }
@@ -501,7 +623,7 @@ public class JuegoPrincipal {
                 break;
             case "3":
                 int j=1;
-                 for (TerminoAcademico t:terminosacad){
+                 for (Termino t:terminosacad){
                     System.out.println(j+". "+ t);
                     ++j;}
                 int elegir = entrada.nextInt();
@@ -528,9 +650,10 @@ public class JuegoPrincipal {
         String codigoMateria= entrada.nextLine();
         Materia materia = new Materia(codigoMateria);
         
-        TerminoAcademico estermac = new TerminoAcademico(anioTerm,numTerm);
+        Termino estermac = new Termino(anioTerm,numTerm);
         Paralelo paralelEst = new Paralelo(paralelo,materia,estermac);
-        paralelEst.leerArchivoEstudiantes();
+        ArchEstudiantes estPar = new ArchEstudiantes(paralelEst);
+        estPar.leerArchivoEstudiantes();
         ArrayList<Estudiante> listEst= paralelEst.getEstudiantes();
         for(Estudiante e: listEst){
             System.out.println(e);
@@ -552,7 +675,7 @@ public class JuegoPrincipal {
                 String codMateria= entrada.nextLine();
                 String nombre = obtNombreConCod(codMateria);
                 if (materiasA(materias,nombre)){
-                    BancoPregunta ej = new BancoPregunta(nombre);
+                    ArchPreguntas ej = new ArchPreguntas(nombre);
                     ej.leerArchivo();
                     Collections.sort(ej.preguntas);
                     int indexP=1;
@@ -569,7 +692,7 @@ public class JuegoPrincipal {
                 String materiaAgregar= entrada.nextLine();
                 String nombreMat = obtNombreConCod(materiaAgregar);
                 if(materiasA(materias,nombreMat)){
-                    BancoPregunta archp = new BancoPregunta(nombreMat);
+                    ArchPreguntas archp = new ArchPreguntas(nombreMat);
                     archp.leerArchivo();
 
                     System.out.println("Ingrese Enunciado de la pregunta");
@@ -600,7 +723,7 @@ public class JuegoPrincipal {
             case"3":
                 System.out.println("Ingrese el nombre de la Materia");
                 String subject = entrada.nextLine();
-                BancoPregunta ap = new BancoPregunta(subject);
+                ArchPreguntas ap = new ArchPreguntas(subject);
                 ap.leerArchivo();
                 System.out.println("Que pregunta desea eliminar");
                 int k=1;
@@ -655,19 +778,19 @@ public class JuegoPrincipal {
     public void actualizarArchivoReporte(String materia,String paralelo,String anio ,String numero) {//// OJO HACER ESTO
         FileWriter writer = null;
         try {
-            String ruta = "src/archivos/"+materia+"-"+paralelo+ "-"+anio+"-"+numero+"-R"+".csv"; //ruta del archivo que se va a leer
+            String ruta = "src/archivos/reportes"+materia+"-"+paralelo+ "-"+anio+"-"+numero+"-R"+".csv"; //ruta del archivo que se va a leer
             writer = new FileWriter(ruta);
             for (Reporte est :reportes ) {
                 writer.write(est.getFechaDeljuego()+ ";" + est.getParticipante().getNombre()+ ";" + est.getNiveMaximoAlcanzado()+";"+ est.getPremio()+System.lineSeparator());
             }
             writer.close();
         } catch (IOException ex) {
-            Logger.getLogger(BancoPregunta.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ArchPreguntas.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 writer.close();
             } catch (IOException ex) {
-                Logger.getLogger(BancoPregunta.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ArchPreguntas.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
@@ -680,8 +803,8 @@ public class JuegoPrincipal {
         return est.get(numAleatorio);
     }
 
-    public void generarCsvReporte(TerminoAcademico termino,Paralelo paralelo, String materia) throws IOException{
-        String archivoCSV = "src/archivos/"+materia+"-"+paralelo.getParaleloCod()+ "-"+termino.getAnio()+"-"+termino.getNumero()+"-R"+".csv";
+    public void generarCsvReporte(Termino termino,Paralelo paralelo, String materia) throws IOException{
+        String archivoCSV = "src/archivos/reportes/"+materia+"-"+paralelo.getParaleloCod()+ "-"+termino.getAnio()+"-"+termino.getNumero()+"-R"+".csv";
         Writer writer = Files.newBufferedWriter(Paths.get(archivoCSV));
     }
 

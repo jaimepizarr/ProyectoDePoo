@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Settings;
+package Modelo;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,23 +17,40 @@ import java.util.logging.Logger;
  */
 public class Reporte implements Comparable<Reporte> {
     
-    private String fechaDeljuego;
+    private Date fechaDeljuego;
     private Estudiante  participante;
     private String niveMaximoAlcanzado;
     private String premio;
+    private String nombreParticipante;
 
-    public Reporte(String fechaDeljuego, Estudiante participante, String niveMaximoAlcanzado, String premio) {
+    public Reporte(Date fechaDeljuego, Estudiante participante, String niveMaximoAlcanzado, String premio) {
         this.fechaDeljuego = fechaDeljuego;
         this.participante = participante;
         this.niveMaximoAlcanzado = niveMaximoAlcanzado;
         this.premio = premio;
     }
 
-    public String getFechaDeljuego() {
+    public Reporte(Date fechaDeljuego, String niveMaximoAlcanzado, String premio, String nombreParticipante) {
+        this.fechaDeljuego = fechaDeljuego;
+        this.niveMaximoAlcanzado = niveMaximoAlcanzado;
+        this.premio = premio;
+        this.nombreParticipante = nombreParticipante;
+    }
+
+    public String getNombreParticipante() {
+        return nombreParticipante;
+    }
+
+    public void setNombreParticipante(String nombreParticipante) {
+        this.nombreParticipante = nombreParticipante;
+    }
+    
+
+    public Date getFechaDeljuego() {
         return fechaDeljuego;
     }
 
-    public void setFechaDeljuego(String fechaDeljuego) {
+    public void setFechaDeljuego(Date fechaDeljuego) {
         this.fechaDeljuego = fechaDeljuego;
     }
 
