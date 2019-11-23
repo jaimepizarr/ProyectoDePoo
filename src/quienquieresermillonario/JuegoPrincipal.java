@@ -9,6 +9,7 @@ import Modelo.Pregunta;
 import Modelo.Reporte;
 import Modelo.Termino;
 import Utileria.Comodin;
+import clasesArch.ArchReporte;
 import java.io.File;
 
 import java.io.FileWriter;
@@ -380,16 +381,30 @@ public class JuegoPrincipal {
                     reportes.add(repJuego);
                     entryMP="4";                    
 
-                    
-                    
-                    try {
-                          //MOSRTAR INGFORMACION AQUI
-                          generarCsvReporte(terminosJuego,paraleloJuego ,mat.getCodigo(),repJuego);
-                        } catch (IOException ex) {
-                          Logger.getLogger(JuegoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    actualizarArchivoReporte(mat.getCodigo(),paraleloJuego.getParaleloCod(),terminosJuego.getAnio() ,terminosJuego.getNumero());
+                    String ruta = "src/archivos/reportes/"+mat.getCodigo()+"-"+paralelo+ "-"+terminosJuego.getAnio()+"-"+terminosJuego.getNumero()+"-R"+".csv";
+                    File csv = new File(ruta);
+                    ArchReporte rep = new ArchReporte();
 
+                    if (!csv.exists()){
+                        try {
+                              //MOSRTAR INGFORMACION AQUI
+                              rep.generarCsvReporte(terminosJuego,paraleloJuego ,mat.getCodigo());
+                            } catch (IOException ex) {
+                              Logger.getLogger(JuegoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        rep.actualizarArchivoReporte(mat.getCodigo(),paraleloJuego.getParaleloCod(),terminosJuego.getAnio() ,terminosJuego.getNumero());
+                    }
+                    else{
+                        rep.leerArchivo(terminosJuego, paraleloJuego, mat.getCodigo());
+                        for(Reporte re:rep.reportes){
+                            System.out.println(re);
+                        }
+                        rep.reportes.add(repJuego);
+                        for(Reporte re:rep.reportes){
+                            System.out.println(re);
+                        }
+                        rep.actualizarArchivoReporte(mat.getCodigo(),paraleloJuego.getParaleloCod(),terminosJuego.getAnio() ,terminosJuego.getNumero());
+                    }
 
                 break;
                 
@@ -438,8 +453,12 @@ public class JuegoPrincipal {
         String paraleloReport= entrada.nextLine();
         Termino termino = new Termino(anioTAcademicoReport,numTAcademicoReport);
         Paralelo paral = new Paralelo( paraleloReport, codigoMateria, termino);
-
-
+        
+        ArchReporte reports = new ArchReporte();
+        reports.leerArchivo(termino, paral, codigoMateria);
+        for (Reporte r: reports.reportes){
+            System.out.println(r);
+        }
        /*try {
            //MOSRTAR INGFORMACION AQUI
            generarCsvReporte( termino,paral ,codigoMateria);
@@ -801,7 +820,7 @@ public class JuegoPrincipal {
         return est.get(numAleatorio);
     }
 
-    public void generarCsvReporte(Termino termino,Paralelo paralelo, String materia,Reporte reporte) throws IOException{
+    public void generarCsvReporte(Termino termino,Paralelo paralelo, String materia) throws IOException{
         String archivoCSV = "src/archivos/reportes/"+materia+"-"+paralelo.getParaleloCod()+ "-"+termino.getAnio()+"-"+termino.getNumero()+"-R"+".csv";
         Writer writer = Files.newBufferedWriter(Paths.get(archivoCSV));
 

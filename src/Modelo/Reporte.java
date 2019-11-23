@@ -25,7 +25,7 @@ public class Reporte implements Comparable<Reporte> {
 
 
 
-    public Reporte(String fechaDeljuego, String niveMaximoAlcanzado, String premio, String nombreParticipante) {
+    public Reporte(String fechaDeljuego,  String nombreParticipante,String niveMaximoAlcanzado, String premio) {
         this.fechaDeljuego = fechaDeljuego;
         this.niveMaximoAlcanzado = niveMaximoAlcanzado;
         this.premio = premio;
@@ -76,6 +76,11 @@ public class Reporte implements Comparable<Reporte> {
     @Override
     public int compareTo(Reporte o) {
         return fechaDeljuego.compareTo(o.getFechaDeljuego());
+    }
+
+    @Override
+    public String toString() {
+        return "Reporte{" + "fechaDeljuego=" + fechaDeljuego + ", niveMaximoAlcanzado=" + niveMaximoAlcanzado + ", premio=" + premio + ", nombreParticipante=" + nombreParticipante + '}';
     }
 
     

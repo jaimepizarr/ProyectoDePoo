@@ -25,7 +25,7 @@ import java.util.logging.Logger;
  * @author PC
  */
 public class ArchReporte {
-    private ArrayList<Reporte> reportes =new ArrayList<>();
+    public ArrayList<Reporte> reportes =new ArrayList<>();
 
 
     public ArchReporte() {
@@ -42,7 +42,7 @@ public class ArchReporte {
             String ruta = "src/archivos/reportes/"+materia+"-"+paralelo+ "-"+anio+"-"+numero+"-R"+".csv"; //ruta del archivo que se va a leer
             writer = new FileWriter(ruta);
             for (Reporte est :reportes ) {
-                writer.write(est.getFechaDeljuego()+ ";" + est.getParticipante().getNombre()+ ";" + est.getNiveMaximoAlcanzado()+";"+ est.getPremio()+System.lineSeparator());
+                writer.write(est.getFechaDeljuego()+ ";" + est.getNombreParticipante()+ ";" + est.getNiveMaximoAlcanzado()+";"+ est.getPremio()+System.lineSeparator());
             }
             writer.close();
         } catch (IOException ex) {
@@ -62,7 +62,7 @@ public class ArchReporte {
         try {
             String ruta = "src/archivos/reportes/"+materia+"-"+paralelo.getParaleloCod()+ "-"+termino.getAnio()+"-"+termino.getNumero()+"-R"+".csv";; //ruta del archivo que se va a leer
             csvReader = new BufferedReader(new FileReader(ruta));
-            String fila = csvReader.readLine();//escapar cabecera de archivo
+            String fila = null;
             while ((fila = csvReader.readLine()) != null) { //iterar en el contenido del archivo
                 String[] data = fila.split(";");
                 reportes.add(new Reporte(data[0], data[1], data[2],data[3])); //crear objeto y agregar a lista
