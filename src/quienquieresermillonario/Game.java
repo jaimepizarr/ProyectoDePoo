@@ -38,10 +38,10 @@ public class Game {
     EstudiantesDat estDat = new EstudiantesDat();
 
 
-    private ArrayList<Termino> terminos_existentes = new ArrayList<>();
+    //private ArrayList<Termino> terminos_existentes = new ArrayList<>();
     private Termino termino;
-    private ArrayList<Materia> materiasJuego = new ArrayList<>();
-    private ArrayList<Paralelo> paralelosJuego = new ArrayList<>();
+    //private ArrayList<Materia> materiasJuego = new ArrayList<>();
+    //private ArrayList<Paralelo> paralelosJuego = new ArrayList<>();
     private ArrayList<Reporte> reportes =new ArrayList<>();
     private Paralelo paraleloJuego =null;
     private String premio = "NADA";
@@ -644,7 +644,7 @@ public class Game {
         }
     }
 
-    public Materia getMateriaConNombre(String nombre){
+    /*public Materia getMateriaConNombre(String nombre){
         Materia obMat = null;
         for (Materia mtr : materiasJuego){
             if (mtr.getNombre().equals(nombre)){
@@ -652,11 +652,11 @@ public class Game {
             }
         }
         return obMat;
-    }
+    }*/
 
    
     
-    public boolean materiasAct(ArrayList<Materia> mat, String nombreMat){
+    /*public boolean materiasAct(ArrayList<Materia> mat, String nombreMat){
         ArrayList<Materia> materiatAct= new ArrayList<>();
         for(Materia mtr: mat){
             if (mtr.isActivo()){
@@ -672,9 +672,9 @@ public class Game {
         return bool;
 
 
-    }
+    }*/
     
-    public String obtNombreConCod ( String codigo){
+    /*public String obtNombreConCod ( String codigo){
         String nombre = null;
         for(Materia m:materiasJuego){
             if (m.getCodigo().equals(codigo)){
@@ -682,14 +682,14 @@ public class Game {
             }
         }
         return nombre;
-    }
+    }*/
 
-    private Estudiante getRandomEstudiantes(ArrayList<Estudiante> est) {
+    /*private Estudiante getRandomEstudiantes(ArrayList<Estudiante> est) {
         Random posAle = new Random(System.currentTimeMillis());
         int numAleatorio = posAle.nextInt(est.size());
         
         return est.get(numAleatorio);
-    }
+    }*/
 
     public boolean verifyPregPorNivel (ArrayList<Pregunta> preguntas, int numPreguntas,Materia materia){
         ArrayList<String> niveles= new ArrayList<>();
@@ -733,7 +733,7 @@ public class Game {
         }
         return extras;
     }
-    public String nombreporMatricula(ArrayList<Estudiante> est){
+    /*public String nombreporMatricula(ArrayList<Estudiante> est){
         System.out.println("Ingrese su matricula:");
         String matriculaest= entrada.nextLine();
         String nombEst = null;
@@ -769,7 +769,7 @@ public class Game {
                 System.out.println("Ingrese una opcion correcta");
         }//switch participante
         return participante;
-    }
+    }*/
     
     public ArrayList<Pregunta> pregToUse(ArrayList<Pregunta> pregTotales, ArrayList<Integer> cantPregExtras,int cantPxNivel){
         ArrayList<Pregunta> PregSegunCantNivel = new ArrayList<>();
