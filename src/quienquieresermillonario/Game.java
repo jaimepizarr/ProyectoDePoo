@@ -2,16 +2,16 @@
 package quienquieresermillonario;
 import clasesArch.ArchEstudiantes;
 import clasesArch.ArchPreguntas;
-import Modelo.Estudiante;
-import Modelo.Materia;
-import Modelo.Paralelo;
-import Modelo.Pregunta;
-import Modelo.Reporte;
-import Modelo.Termino;
+import Entidades.Estudiante;
+import Entidades.Materia;
+import Entidades.Paralelo;
+import Entidades.Pregunta;
+import Entidades.Reporte;
+import Entidades.Termino;
 import Utileria.Comodin;
 import clasesArch.ArchReporte;
 import java.io.File;
-
+import Data.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -31,13 +31,20 @@ import java.util.logging.Logger;
 @SuppressWarnings("InitializerMayBeStatic")
 public class Game {
     Scanner entrada = new Scanner(System.in);
+
+    MateriaParaleloDat matpardat= new MateriaParaleloDat();
+    TerminosDat termdat = new TerminosDat(); 
+    PreguntasDat pregDat = new PreguntasDat();
+    EstudiantesDat estDat = new EstudiantesDat();
+
+
     private ArrayList<Termino> terminos_existentes = new ArrayList<>();
-    private Termino terminosJuego;
+    private Termino termino;
     private ArrayList<Materia> materiasJuego = new ArrayList<>();
     private ArrayList<Paralelo> paralelosJuego = new ArrayList<>();
     private ArrayList<Reporte> reportes =new ArrayList<>();
     private Paralelo paraleloJuego =null;
-    private String premio = "";
+    private String premio = "NADA";
 
     public static void main(String[] args) {
         /*int numero = (int) ((Math.random() * 5) + 1);
@@ -52,102 +59,77 @@ public class Game {
     public void menu(){
         String entryMP= "a";
         while (entryMP!="4"){
-           System.out.println("SELECCIONE UNA OPCION PARA INICIAR\n1. Configuraciones\n" +
+           System.out.println("SELECCIONE UNA OPCION PARA INICIAR\n"+
+            "1. Configuraciones\n" +
            "2. Nuevo juego\n" +
            "3. Reporte\n" +
            "4. Salir");
-           String opcion= entrada.nextLine();
-            switch (opcion){
+           String opcionMP= entrada.nextLine();
+            switch (opcionMP){
             case "1":
                 configuraciones();
                 break;
             case "2":
-                if(terminosJuego != null){
+                if(termino != null){
                     System.out.println("JUEGO NUEVO");
                     //Materia
                     System.out.println("Ingrese Materia");
                     String nombreMateria= entrada.nextLine();
-                    ArchPreguntas aprob = new ArchPreguntas(nombreMateria);
-                    aprob.leerArchivo();
+                    
+                    
+                    ArchPreguntas archPreg = new ArchPreguntas(nombreMateria);
+                    archPreg.leerArchivo();
 
 
                     //Paralelo
                     System.out.println("Ingrese Paralelo");
                     String paralelo= entrada.nextLine();
-                    ArrayList<Estudiante> est = new ArrayList<>();
-                    for (Paralelo p:paralelosJuego){
+                    
+                    ArrayList<Estudiante> estudiantes = new ArrayList<>();
+                    for (Paralelo par:matpardat.getParalelosJuego()){
                        
-                        if (p.getParaleloCod().equals(paralelo)){
-                            paraleloJuego=p;
-                            ArchEstudiantes arEst= new ArchEstudiantes(p);
+                        if (par.getParaleloCod().equals(paralelo)){
+                            paraleloJuego=par;
+                            ArchEstudiantes arEst= new ArchEstudiantes(par);
                             arEst.leerArchivoEstudiantes();
-                            for(Estudiante student :p.getEstudiantes()){
-                                est.add(student);
+                            for(Estudiante student :par.getEstudiantes()){
+                                estudiantes.add(student);
                             }
                         }
                     }
                     //Preguntas por nivel
-                    Materia mat = getMateriaConNombre(nombreMateria);                    
-                    String entry = "a";
+                    Materia matElegida = matpardat.getMateriaConNombre(nombreMateria);                    
+                    boolean entry = true;
                     
-                    int numNivel=0;
-                    while(entry == "a"){
-                        System.out.println("Ingrese el numero de preguntas por nivel");
-                        numNivel= entrada.nextInt();
+                    int cantPxNivel=0;
+                    while(entry){
+                        System.out.println("Ingrese el numero de preguntas por nivel que desea: ");
+                        cantPxNivel= entrada.nextInt();
                         entrada.nextLine();
-                        if(verificacion(aprob.preguntas,numNivel,mat)){
-                            entry="b";
+                        if(verifyPregPorNivel(archPreg.preguntas,cantPxNivel,matElegida)){
+                            entry=false;
                         }
                         else{
-                            System.out.println("No hay suficientes preguntas en algunos niveles");
+                            System.out.println("Hay niveles que no contienen la cantidad de preguntas que pidió");
 
                         }
                     }
                     
-                    ArrayList<Integer> saltosPreg= saltosPreguntas(aprob.preguntas,numNivel, mat);
-                    ArrayList<Pregunta> PregSegunCantNivel = new ArrayList<>();
+                    ArrayList<Integer> cantPregExtras= listCantPregExtras(archPreg.preguntas,cantPxNivel, matElegida);
                     
-                    ArrayList<Pregunta> copia = new ArrayList<>();
-                    copia= (ArrayList)aprob.preguntas.clone();
-                    for (int j:saltosPreg){
-                        for (int k =0; k<numNivel;k++){
-                                PregSegunCantNivel.add(copia.get(k));
-                                copia.remove(k);
-                        }
-                        for (int l=0;l<j;l++){
-                            copia.remove(l);
-                        }
-                        
-                    }
+                    ArrayList<Pregunta> pregSegunCantNivel=pregToUse(archPreg.preguntas,cantPregExtras,cantPxNivel);
                     
-                    //Participante
-                    System.out.println("PARTICIPANTE: \n1.Ingresar matricula.\n2.Elegir Aleatoreamente");
-                    String opcionParticipante= entrada.nextLine();
-                    String participante= null;
-                    switch (opcionParticipante){
-                        case "1":
-                            //matricula del participante
-                            participante = nombreporMatricula(est);
-                            break;
-                        case "2":
-                            //Eleccion del participante aleatoreamente
-                           participante = nombreporAleatorio(est);
-                            System.out.println("El estudiante elegido es: "+participante);
-                            break;
-
-                        default:
-                            System.out.println("Ingrese una opcion correcta");
-                    }//switch participante
+                    //ELECCION DEL PARTICIPANTE
+                    
+                    String participante = estDat.chooseParticipante(estudiantes);
                     
 
-
-
-                //SALE E INICIA EL JUEGO
+                //INICIO DEL JUEGO
+                
                     System.out.println("¿QUIEN QUIERE SER MILLONARIO? ESTUDIANTIL");
                     System.out.println("Bienvenido "+ participante+"!!");
                     System.out.println("Presiona una tecla para continuar");
                     entrada.nextLine();
-                    aprob.leerArchivo();
                     
                     ArrayList<String> comodines = new ArrayList<>();
                     for (Comodin com: Comodin.values()){
@@ -155,220 +137,114 @@ public class Game {
                         System.out.println(com.name());
                     }
                     int puntos=0;
-                    /*
-                    int salir = 0;
                     
-                    while (salir!=1){
-                        for(Pregunta mostrar:aprob.preguntas){
-
-                            ArrayList<String> letras =new ArrayList<>();
-                            letras.add("A");
-                            letras.add("B");
-                            letras.add("C");
-                            letras.add("D");
-                            
-                            ArrayList<String> respIncorrectas = new ArrayList<>();
-                            respIncorrectas.add(mostrar.getRespInc1());
-                            respIncorrectas.add(mostrar.getRespInc2());
-                            respIncorrectas.add(mostrar.getRespInc3());
-                            
-                            ArrayList<String> respuestas = new ArrayList<>();
-                            for(String rIn:respIncorrectas){
-                                respuestas.add(rIn);
-                            }
-                            respuestas.add(mostrar.getrCorrecta());
-                            Collections.shuffle(respuestas);
-                            
-                            int index=respuestas.indexOf(mostrar.getrCorrecta());
-                            String letraCorrecta= letras.get(index);
-                            
-                            System.out.println(mostrar.getEnunciado());
-                            for(int p=0;p<letras.size();p++){
-                                System.out.println(letras.get(p)+".- "+respuestas.get(p));
-                            }
-                            
-                            
-                            String repuestaElegida= entrada.nextLine();
-                            if((!repuestaElegida.toUpperCase().equals(letraCorrecta)) &&(!repuestaElegida.equals("*")) ){
-                                System.out.println("Perdiste");
-                                System.out.println("FIN DEL JUEGO");
-                                salir=1;
-                                
-                                break;
-                            }    
-                            
-                                    
-                            int n =0;
-                            while (n!=4){
-                            
-                            
-                            if(repuestaElegida.equals("*")){
-                                System.out.println("Comodines: ");
-                                int k=1;
-                                for(String c: comodines){
-                                    System.out.println(k+".- "+c);
-                                    k++;
-                                }
-                               
-                                System.out.println("Elija un comodin");
-                                int comElegido= entrada.nextInt();
-                                entrada.nextLine();
-                                comodines.remove(comodines.get(comElegido-1));
-                                switch (comElegido){
-                                    case 1:
-                                        
-                                        Random aleatorio = new Random(System.currentTimeMillis());
-                                        int numAleatorio1 = aleatorio.nextInt(respIncorrectas.size());
-                                        //respIncorrectas.remove(numAleatorio1);
-                                        //letras.remove("C");
-                                        
-                                        int numAleatorio2 = aleatorio.nextInt(respIncorrectas.size());
-                                        //respIncorrectas.remove(numAleatorio2);
-                                        //letras.remove("D");
-                                        String incorrecta1 = respIncorrectas.get(numAleatorio1);
-                                        String incorrecta2 = respIncorrectas.get(numAleatorio2);
-                                        System.out.println("La opcion: " +incorrecta1 + " es incorrecta");
-                                        System.out.println("La opcion: " +incorrecta2 + " es tambien incorrecta");
-                                        
-                                        break;
-                                        
-                                    case 2:
-                                        System.out.println("Ha usado el comodin CONSULTA AL COMPAÑERO");
-                                        break;
-                                    
-                                    case 3:
-                                        System.out.println("Ha usado el comodin CONSULTA AL SALON");
-                                } 
-                                System.out.println("Cual es la respuesta correcta?");
-                                repuestaElegida= entrada.nextLine();
-                                if((!repuestaElegida.toUpperCase().equals(letraCorrecta)) &&(!repuestaElegida.equals("*")) ){
-                                    System.out.println("Perdiste");
-                                    System.out.println("FIN DEL JUEGO");
-                                    salir=1;
-                                    n=4;
-                                    entryMP="4";
-                                    break;
-                                }
-                                
-                                else if(repuestaElegida.toUpperCase().equals(letraCorrecta)){
-                                    System.out.println("FELICITACIONES! HAZ CONTESTADO CORRECTAMENTE");
-                                    System.out.println("SIGUIENTE PREGUNTA:");
-                                    puntos++;
-                                    n=4;
-                                    break;
-                                }
-                                break;
-                            }
-                            else if(repuestaElegida.toUpperCase().equals(letraCorrecta)){
-                                System.out.println("FELICITACIONES! HAZ CONTESTADO CORRECTAMENTE");
-                                System.out.println("SIGUIENTE PREGUNTA:");
-                                puntos++;
-                                n=4;
-                            }*/
                     int n = 0;
 
-                    while (n<aprob.preguntas.size()){
-                            Pregunta mostrar = aprob.preguntas.get(n);
-                            ArrayList<String> letras =new ArrayList<>();
-                            letras.add("A");
-                            letras.add("B");
-                            letras.add("C");
-                            letras.add("D");
+                    while (n<pregSegunCantNivel.size()){
+                        Pregunta mostrar = pregSegunCantNivel.get(n);
+                        ArrayList<String> letrasResp =new ArrayList<>();
+                        letrasResp.add("A");
+                        letrasResp.add("B");
+                        letrasResp.add("C");
+                        letrasResp.add("D");
 
-                            ArrayList<String> respIncorrectas = new ArrayList<>();
-                            respIncorrectas.add(mostrar.getRespInc1());
-                            respIncorrectas.add(mostrar.getRespInc2());
-                            respIncorrectas.add(mostrar.getRespInc3());
+                        ArrayList<String> respIncorrectas = new ArrayList<>();
+                        respIncorrectas.add(mostrar.getRespInc1());
+                        respIncorrectas.add(mostrar.getRespInc2());
+                        respIncorrectas.add(mostrar.getRespInc3());
 
-                            ArrayList<String> respuestas = new ArrayList<>();
-                            for(String rIn:respIncorrectas){
-                                    respuestas.add(rIn);
+                        ArrayList<String> respuestas = new ArrayList<>();
+                        for(String rIn:respIncorrectas){
+                                respuestas.add(rIn);
+                        }
+                        respuestas.add(mostrar.getrCorrecta());
+                        
+                        Collections.shuffle(respuestas); //Se baraja la lista respuesta
+
+                        int rightIndex=respuestas.indexOf(mostrar.getrCorrecta());
+                        String letraCorrecta= letrasResp.get(rightIndex);
+
+                        System.out.println(mostrar.getEnunciado());
+                        for(int p=0;p<letrasResp.size();p++){
+                                System.out.println(letrasResp.get(p)+".- "+respuestas.get(p));
+                        }		
+
+                        String repuestaElegida= entrada.nextLine();
+                        if((!repuestaElegida.toUpperCase().equals(letraCorrecta)) &&(!repuestaElegida.equals("*")) ){
+                                System.out.println("TE HAS EQUIVOCADO");
+                                System.out.println("FIN DEL JUEGO");
+                                n=pregSegunCantNivel.size();
+
+                                break;
+                        }    
+                        else if(repuestaElegida.toUpperCase().equals(letraCorrecta)){
+                                System.out.println("FELICITACIONES! HAS ELEGIDO LA RESPUESTA CORRECTA");
+                                puntos++;
+                                n++;
+                        }
+
+                        else if (repuestaElegida.equals("*")){
+                            System.out.println("Comodines: ");
+                            int k=1;
+                            for(String c: comodines){
+                                    System.out.println(k+".- "+c);
+                                    k++;
                             }
-                            respuestas.add(mostrar.getrCorrecta());
-                            Collections.shuffle(respuestas);
 
-                            int index=respuestas.indexOf(mostrar.getrCorrecta());
-                            String letraCorrecta= letras.get(index);
+                            System.out.println("Elija un comodin");
+                            String comElegido= entrada.nextLine();
 
-                            System.out.println(mostrar.getEnunciado());
-                            for(int p=0;p<letras.size();p++){
-                                    System.out.println(letras.get(p)+".- "+respuestas.get(p));
-                            }		
+                            comodines.remove(comElegido);
+                            switch (comElegido){
+                                case "COMODIN50_50":
+                                    Random aleatorio = new Random(System.currentTimeMillis());
+                                    int numAleatorio1 = aleatorio.nextInt(respIncorrectas.size());
 
-                            String repuestaElegida= entrada.nextLine();
-                            if((!repuestaElegida.toUpperCase().equals(letraCorrecta)) &&(!repuestaElegida.equals("*")) ){
-                                    System.out.println("Perdiste");
-                                    System.out.println("FIN DEL JUEGO");
-                                    n=aprob.preguntas.size();
+
+                                    int numAleatorio2 = aleatorio.nextInt(respIncorrectas.size());
+
+                                    String incorrecta1 = respIncorrectas.get(numAleatorio1);
+                                    String incorrecta2 = respIncorrectas.get(numAleatorio2);
+                                    System.out.println("La opcion: " +incorrecta1 + " es incorrecta");
+                                    System.out.println("La opcion: " +incorrecta2 + " es tambien incorrecta");
+
 
                                     break;
-                            }    
+
+                            case "CONSULTA_COMPAÑERO":
+                                    System.out.println("Puede elegir a un compañero a quien preguntar.");
+                                    break;
+
+                            case "CONSULTA_SALON":
+                                    System.out.println("Puede consultar la pregunta a todo el salón.");
+                            } 
+                            System.out.println("Cual es la respuesta correcta?");
+                            repuestaElegida= entrada.nextLine();
+                            if((!repuestaElegida.toUpperCase().equals(letraCorrecta)) &&(!repuestaElegida.equals("*")) ){
+                                    System.out.println("TE HAS EQUIVOCADO");
+                                    System.out.println("FIN DEL JUEGO");
+                                    n=pregSegunCantNivel.size();
+                                    break;
+                            }
+
                             else if(repuestaElegida.toUpperCase().equals(letraCorrecta)){
-                                    System.out.println("FELICITACIONES! HAZ CONTESTADO CORRECTAMENTE");
-                                    System.out.println("SIGUIENTE PREGUNTA:");
+                                    System.out.println("FELICITACIONES! HAS ELEGIDO LA RESPUESTA CORRECTA");
+                                    
                                     puntos++;
                                     n++;
-                            }
-
-
-                            else if (repuestaElegida.equals("*")){
-                                System.out.println("Comodines: ");
-                                int k=1;
-                                for(String c: comodines){
-                                        System.out.println(k+".- "+c);
-                                        k++;
-                                }
-
-                                System.out.println("Elija un comodin");
-                                String comElegido= entrada.nextLine();
-
-                                comodines.remove(comElegido);
-                                switch (comElegido){
-                                        case "COMODIN50_50":
-                                                Random aleatorio = new Random(System.currentTimeMillis());
-                                                int numAleatorio1 = aleatorio.nextInt(respIncorrectas.size());
-                                                //respIncorrectas.remove(numAleatorio1);
-                                                //letras.remove("C");
-
-                                                int numAleatorio2 = aleatorio.nextInt(respIncorrectas.size());
-                                                //respIncorrectas.remove(numAleatorio2);
-                                                //letras.remove("D");
-                                                String incorrecta1 = respIncorrectas.get(numAleatorio1);
-                                                String incorrecta2 = respIncorrectas.get(numAleatorio2);
-                                                System.out.println("La opcion: " +incorrecta1 + " es incorrecta");
-                                                System.out.println("La opcion: " +incorrecta2 + " es tambien incorrecta");
-
-
-                                                break;
-
-                                        case "CONSULTA_COMPAÑERO":
-                                                System.out.println("Ha usado el comodin CONSULTA AL COMPAÑERO");
-                                                break;
-
-                                        case "CONSULTA_SALON":
-                                                System.out.println("Ha usado el comodin CONSULTA AL SALON");
-                                } 
-                                System.out.println("Cual es la respuesta correcta?");
-                                repuestaElegida= entrada.nextLine();
-                                if((!repuestaElegida.toUpperCase().equals(letraCorrecta)) &&(!repuestaElegida.equals("*")) ){
-                                        System.out.println("Perdiste");
-                                        System.out.println("FIN DEL JUEGO");
-                                        n=aprob.preguntas.size();
-                                        break;
-                                }
-
-                                else if(repuestaElegida.toUpperCase().equals(letraCorrecta)){
-                                        System.out.println("FELICITACIONES! HAZ CONTESTADO CORRECTAMENTE");
-                                        System.out.println("SIGUIENTE PREGUNTA:");
-                                        puntos++;
-                                        n++;
-
-                                }
-                                    
-                            }
-
+                            }                                    
+                        }
                     }
-                    int nivelAlcanzado =(int) Math.floor(puntos/numNivel);
+                    int nivelAlcanzado =(int)(puntos/cantPxNivel);
+                    if (nivelAlcanzado ==0){
+                        System.out.println("DEBES MEJORAR, ESTUDIA MAS");
+                    }
+                    else if (nivelAlcanzado == 3){
+                        System.out.println("EXCELENTE! HAS RESPONDIDO TODO BIEN");
+                    }
+                    else{
+                        System.out.println("BUEN TRABAJO! LLEGASTE AL NIVEL "+ nivelAlcanzado);
+                    }
                     String nivel = Integer.toString(nivelAlcanzado);
                     Date hoy = new Date();
                     if (nivelAlcanzado >= 1){
@@ -381,50 +257,37 @@ public class Game {
                     reportes.add(repJuego);
                     entryMP="4";                    
 
-                    String ruta = "src/archivos/reportes/"+mat.getCodigo()+"-"+paralelo+ "-"+terminosJuego.getAnio()+"-"+terminosJuego.getNumero()+"-R"+".csv";
-                    File csv = new File(ruta);
+                    String ruta = "src/archivos/reportes/"+matElegida.getCodigo()+"-"+paralelo+ "-"+termino.getAnio()+"-"+termino.getNumero()+"-R"+".csv";
+                    File reporteCsv = new File(ruta);
                     ArchReporte rep = new ArchReporte();
 
-                    if (!csv.exists()){
+                    if (!reporteCsv.exists()){
                         try {
-                              //MOSRTAR INGFORMACION AQUI
-                              rep.generarCsvReporte(terminosJuego,paraleloJuego ,mat.getCodigo());
+                              rep.generarCsvReporte(ruta);
                             } catch (IOException ex) {
                               Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        rep.actualizarArchivoReporte(mat.getCodigo(),paraleloJuego.getParaleloCod(),terminosJuego.getAnio() ,terminosJuego.getNumero());
+                        rep.reportes.add(repJuego);
+                        rep.actualizarArchivoReporte(ruta);
                     }
                     else{
-                        rep.leerArchivo(terminosJuego, paraleloJuego, mat.getCodigo());
-                        for(Reporte re:rep.reportes){
-                            System.out.println(re);
-                        }
+                        rep.leerArchivo(ruta);
                         rep.reportes.add(repJuego);
-                        for(Reporte re:rep.reportes){
-                            System.out.println(re);
-                        }
-                        rep.actualizarArchivoReporte(mat.getCodigo(),paraleloJuego.getParaleloCod(),terminosJuego.getAnio() ,terminosJuego.getNumero());
+                        rep.actualizarArchivoReporte(ruta);
                     }
-
                 break;
-                
-                
                 }
-
                 else{
                     System.out.println("Debe configurar el termino");
-                    
                 }
                 
             //REPORTE
                 break; //CASE 2 PRINCIPAL//CASE 2 PRINCIPAL
-            case "3":
-                
+            case "3":             
                 menuReporte();
-
                 break; //CASE 3 PRINCIPAL
 
-     //SALIR
+            //SALIR
             case "4":
                 entryMP="4";
                 break;
@@ -440,9 +303,9 @@ public class Game {
         //Termino academino
         System.out.println("Anio Termino Academino");
 
-        String anioTAcademicoReport= entrada.nextLine();
+        String anioTerm= entrada.nextLine();
         System.out.println("Numero Termino Academico");
-        String numTAcademicoReport = entrada.nextLine();
+        String numTerm = entrada.nextLine();
        //Codigo materia
         System.out.println("Ingrese Codigo de Materia");
         String codigoMateria= entrada.nextLine();
@@ -450,21 +313,15 @@ public class Game {
 
         //Paralelo
         System.out.println("Ingrese Paralelo");
-        String paraleloReport= entrada.nextLine();
-        Termino termino = new Termino(anioTAcademicoReport,numTAcademicoReport);
-        Paralelo paral = new Paralelo( paraleloReport, codigoMateria, termino);
-        
+        String numParalelo= entrada.nextLine();
+        String ruta = "src/archivos/reportes/"+codigoMateria+"-"+numParalelo+ "-"+anioTerm+"-"+numTerm+"-R"+".csv";
+
         ArchReporte reports = new ArchReporte();
-        reports.leerArchivo(termino, paral, codigoMateria);
+        reports.leerArchivo(ruta);
         for (Reporte r: reports.reportes){
             System.out.println(r);
         }
-       /*try {
-           //MOSRTAR INGFORMACION AQUI
-           generarCsvReporte( termino,paral ,codigoMateria);
-       } catch (IOException ex) {
-           Logger.getLogger(JuegoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
-       }*/
+
     }
     public void configuraciones(){
         String ii= "a";
@@ -501,18 +358,17 @@ public class Game {
     public void adminMatPar(){
         System.out.println("materias y paralelos");
         //IMPRIMIR LISTADO DE MATERIAS Y PARALELOS QUE EL PROFESOR A DICTADO
-
         System.out.println("1.- Ingresar materia\n" +
                                "2.- Editar materia\n" +
                                "3.- Desactivar materia\n" +
                                "4.- Agregar paralelo\n" +
                                "5.- Eliminar paralelo");
-        String opcionMP= entrada.nextLine();
-        switch (opcionMP){
+        String opcionMat= entrada.nextLine();
+        switch (opcionMat){
             case "1":
-
-                System.out.println("Ingrese Nombre Materia");
-                String nombre= entrada.nextLine();
+                matpardat.ingresarMateria();
+                /*System.out.println("Ingrese Nombre Materia");
+                String nombreMat= entrada.nextLine();
 
                 System.out.println("Ingrese Codigo Materia");
                 String codigoMateria= entrada.nextLine();
@@ -520,57 +376,75 @@ public class Game {
                 System.out.println("Cantidad de niveles");
                 int cantidadNiveles= entrada.nextInt();
                 entrada.nextLine();
-                Materia materia = new Materia(nombre,codigoMateria,cantidadNiveles);
-                materiasJuego.add(materia);
+                
+                Materia materia = new Materia(nombreMat,codigoMateria,cantidadNiveles);
+                materiasJuego.add(materia);                /*System.out.println("Ingrese Nombre Materia");
+                String nombreMat= entrada.nextLine();
+
+                System.out.println("Ingrese Codigo Materia");
+                String codigoMateria= entrada.nextLine();
+
+                System.out.println("Cantidad de niveles");
+                int cantidadNiveles= entrada.nextInt();
+                entrada.nextLine();
+                
+                Materia materia = new Materia(nombreMat,codigoMateria,cantidadNiveles);
+                materiasJuego.add(materia);*/
                 break;
 
             case "2":
-                System.out.println("Ingrese Codigo Materia");
-                String materiaAeditar= entrada.nextLine();
+                matpardat.editarMateria();
+                /*System.out.println("Ingrese Codigo Materia");
+                String codMateria= entrada.nextLine();
                 int pos = 0;
                 for (int i =0; i<materiasJuego.size();++i){
-                    if (materiasJuego.get(i).getNombre().equals(materiaAeditar)){
+                    if (materiasJuego.get(i).getCodigo().equals(codMateria)){
                         pos=i;
                     }
                 }
-                String resp = "Y";
-                System.out.println("Desea cambiar el nombre de la materia? Y/N");
-                while (resp == "Y"){
-                    System.out.println("Ingrese el nombre que desea poner");
+                String cambio = "S";
+                System.out.println("¿Desea cambiar el nombre de la materia? \nS/N");
+                while (cambio == "S"){
+                    System.out.println("Ingrese el nuevo nombre");
                     String nombre_nuevo = entrada.nextLine();
                     materiasJuego.get(pos).setNombre(nombre_nuevo);
                 }
-                String resp2="Y";
-                System.out.println("Desea cambiar la cantidad de niveles de la materia? Y/N");
-                while (resp2 == "Y"){
-                    System.out.println("Ingrese la cantidad de niveles");
+                String cambio2="Y";
+                System.out.println("¿Desea cambiar la cantidad de niveles de la materia? \n S/N");
+                while (cambio2 == "S"){
+                    System.out.println("Ingrese la nueva cantidad de niveles");
                     int niveles = entrada.nextInt();
                     entrada.nextLine();
                     materiasJuego.get(pos).setCantidadNiveles(niveles);
-                }
+                }*/
                 break;
             case "3":
+                matpardat.desactivarMateria();
+                /*
                 System.out.println("Ingrese Codigo Materia");
-                String materiaAdesactivar= entrada.nextLine();
-                System.out.println("Esta seguro de desactivar esta materia?\nReponder con Y/N");
-                String decision= entrada.nextLine();
-                switch (decision){
-                    case "Y":
-                        for (Materia m : materiasJuego){
-                            if (m.getNombre().equals(materiaAdesactivar)){
-                                m.setActivo(false);
+                String codMatDesac= entrada.nextLine();
+                System.out.println("¿Está seguro de desactivar esta materia?\n  S/N");
+                String confirmacion= entrada.nextLine();
+                switch (confirmacion){
+                    case "S":
+                        for (Materia mat : materiasJuego){
+                            if (mat.getCodigo().equals(codMatDesac)){
+                                mat.setActivo(false);
                             }
                         }
                         break;
                     case "N":
-                        break; }//Swith desicion
+                        break; 
+                }*/
                 break;
 
             case "4":
+                matpardat.agregarParalelo();
+                /*
                 System.out.println("Ingrese Materia");
-                String materiaIngresada= entrada.nextLine();
-                Materia mat = getMateriaConNombre(materiaIngresada);
-                if (materiasA(materiasJuego,materiaIngresada)){
+                String nombMat= entrada.nextLine();
+                Materia matForPar = getMateriaConNombre(nombMat);
+                if (materiasAct(materiasJuego,nombMat)){
                     System.out.println("Ingrese el año del Termino Academico");
                     String anioTerm= entrada.nextLine();
 
@@ -579,18 +453,21 @@ public class Game {
 
 
                     System.out.println("Ingrese Numero de paralelo");
-                    String numeroParalelo= entrada.nextLine();
-                    paralelosJuego.add(new Paralelo(numeroParalelo,mat,new Termino(anioTerm,numTerm)));
-                }
+                    String paralelo= entrada.nextLine();
+                    
+                    Paralelo parJuego = new Paralelo(paralelo,matForPar,new Termino(anioTerm,numTerm));
+                    paralelosJuego.add(parJuego);
+                }*/
 
 
                 break;//case4MATERIAS Y PARALELO
             case "5":
                 //MOSTRAR PARALELOS EXISTENTES
-                ArrayList<Paralelo> parElim = new ArrayList<>();
+                matpardat.eliminarParalelo();
+                /*ArrayList<Paralelo> parElim = new ArrayList<>();
                 for (Paralelo p: paralelosJuego){
                     int i=1;
-                    if(materiasA(materiasJuego,p.getMateria().getNombre())){
+                    if(materiasAct(materiasJuego,p.getMateria().getNombre())){
                         System.out.println(i+".- "+p);
                         i++;
                         parElim.add(p);
@@ -599,7 +476,7 @@ public class Game {
                 System.out.println("Seleccionar paralelo a eliminar");
                 int seleccion=entrada.nextInt();
                 entrada.nextLine();
-                paralelosJuego.remove(parElim.get(seleccion - 1));
+                paralelosJuego.remove(parElim.get(seleccion - 1));*/
                 break;//case 5MATERIAS Y PARALELO
             default:
                 System.out.println("Ingresar una opcion correcta");
@@ -615,18 +492,20 @@ public class Game {
         String termino=entrada.nextLine();
         switch (termino){
             case "1":
+                termdat.ingresarTermino();
                 //SE INGRESA TERMINO
                 //anio
-                System.out.println("Ingresar anio: ");
+                /*System.out.println("Ingresar anio: ");
                 String anio= entrada.nextLine();
                 //numero de termino
                 System.out.println("Ingresar numero de termino");
                 String numeroTermino= entrada.nextLine();
                 Termino term = new Termino(anio,numeroTermino);
-                terminos_existentes.add(term);
+                terminos_existentes.add(term);*/
                 break;
             case "2":
-                int i=1;
+                termdat.eliminarTermino();
+                /*int i=1;
                 System.out.println("Los terminos existentes son: ");
                 for (Termino t:terminos_existentes){
                     System.out.println(i+". "+ t);
@@ -635,24 +514,26 @@ public class Game {
                 System.out.println("Ingrese el numero del termino a eliminar");
                 int termElim = entrada.nextInt();
                 entrada.nextLine();
-                terminos_existentes.remove(termElim-1);
+                terminos_existentes.remove(termElim-1);*/
             //ELIMINAR TERMINO
                 break;
             case "3":
-                int j=1;
+                this.termino= termdat.configurarTerminoJuego();
+                /*int j=1;
                  for (Termino t:terminos_existentes){
                     System.out.println(j+". "+ t);
                     ++j;}
                 int elegir = entrada.nextInt();
                 entrada.nextLine();
-                terminosJuego=terminos_existentes.get(elegir-1);
-
+                this.termino=terminos_existentes.get(elegir-1);
+*/
                  break;
             default:
                  System.out.println("Ingrese una opcion correcta");}//switch terminos academicos
     }
     public void adminEstudiantes(){
-        System.out.println("Administrar estudiantes");
+        EstudiantesDat.adminEstudiantes();
+        /*System.out.println("Administrar estudiantes");
         //IMPRIMIR LISTADO DE ESTUDIANTES POR TERMINO ACADEMICO Y PARALELO DE MATERIA
         System.out.println("Ingrese Paralelo");
         String paralelo= entrada.nextLine();
@@ -674,7 +555,7 @@ public class Game {
         ArrayList<Estudiante> listEst= paralelEst.getEstudiantes();
         for(Estudiante e: listEst){
             System.out.println(e);
-        }
+        }*/
         //GUARDAR INFORMACION CSV
 
     }
@@ -690,8 +571,13 @@ public class Game {
             case "1":
                 System.out.println("Ingrese Codigo Materia");
                 String codMateria= entrada.nextLine();
+                String nombre = matpardat.obtNombreConCod(codMateria);
+                if (matpardat.materiasAct(matpardat.getMateriasJuego(),nombre)){
+                    pregDat.visualizarPreguntas(matpardat.getMateriasJuego(),nombre);}
+                /*System.out.println("Ingrese Codigo Materia");
+                String codMateria= entrada.nextLine();
                 String nombre = obtNombreConCod(codMateria);
-                if (materiasA(materiasJuego,nombre)){
+                if (materiasAct(materiasJuego,nombre)){
                     ArchPreguntas ej = new ArchPreguntas(nombre);
                     ej.leerArchivo();
                     Collections.sort(ej.preguntas);
@@ -700,15 +586,16 @@ public class Game {
                               System.out.println(indexP + " " +mostrar);
                               indexP+=1;
                     }
-                }
+                }*/
 
                 break;
 
             case"2":
-                System.out.println("Ingrese Codigo Materia");
+                pregDat.agregPregunta();
+                /*System.out.println("Ingrese Codigo Materia");
                 String materiaAgregar= entrada.nextLine();
                 String nombreMat = obtNombreConCod(materiaAgregar);
-                if(materiasA(materiasJuego,nombreMat)){
+                if(materiasAct(materiasJuego,nombreMat)){
                     ArchPreguntas archp = new ArchPreguntas(nombreMat);
                     archp.leerArchivo();
 
@@ -734,11 +621,11 @@ public class Game {
                     archp.preguntas.add(preguntaAgg);
                     //ALMACENAR PREGUNTAS EN CSV NOMBRE CODIGO DE LA MATERIA
                     archp.actualizarArchivo();
-                    }
+                    }*/
 
                 break;
             case"3":
-                System.out.println("Ingrese el nombre de la Materia");
+                /*System.out.println("Ingrese el nombre de la Materia");
                 String subject = entrada.nextLine();
                 ArchPreguntas ap = new ArchPreguntas(subject);
                 ap.leerArchivo();
@@ -751,6 +638,10 @@ public class Game {
                 int  eliminar= entrada.nextInt();
                 ap.preguntas.remove((eliminar-1));
                 ap.actualizarArchivo();}//switchAdmisitrar preguntar
+                */
+                pregDat.eliminarPreg();
+                break;
+        }
     }
 
     public Materia getMateriaConNombre(String nombre){
@@ -765,7 +656,7 @@ public class Game {
 
    
     
-    public boolean materiasA(ArrayList<Materia> mat, String nombreMat){
+    public boolean materiasAct(ArrayList<Materia> mat, String nombreMat){
         ArrayList<Materia> materiatAct= new ArrayList<>();
         for(Materia mtr: mat){
             if (mtr.isActivo()){
@@ -800,7 +691,7 @@ public class Game {
         return est.get(numAleatorio);
     }
 
-    public boolean verificacion (ArrayList<Pregunta> preguntas, int numPreguntas,Materia materia){
+    public boolean verifyPregPorNivel (ArrayList<Pregunta> preguntas, int numPreguntas,Materia materia){
         ArrayList<String> niveles= new ArrayList<>();
         for (Pregunta pregun : preguntas){
             niveles.add(pregun.getNivel());
@@ -828,19 +719,19 @@ public class Game {
         return condi;
     }
 
-    public ArrayList<Integer> saltosPreguntas(ArrayList<Pregunta> preguntas, int numPreguntas, Materia materia){
-        ArrayList<String> niveles= new ArrayList<>();
+    public ArrayList<Integer> listCantPregExtras(ArrayList<Pregunta> preguntas, int numPreguntas, Materia materia){
+        ArrayList<String> repeticioNiveles= new ArrayList<>();
         for (Pregunta p : preguntas){
-            niveles.add(p.getNivel());
+            repeticioNiveles.add(p.getNivel());
         }
         int cantNivelMat = materia.getCantidadNiveles();
-        ArrayList<Integer> saltos=new ArrayList<>();
+        ArrayList<Integer> extras=new ArrayList<>();
         for (int i=0; i<cantNivelMat;i++){
-            String j= i+"";
-            int frequency = Collections.frequency(niveles,j);
-            saltos.add(frequency-numPreguntas);
+            String j= ""+i;
+            int frecNiveles = Collections.frequency(repeticioNiveles,j);
+            extras.add(frecNiveles-numPreguntas);
         }
-        return saltos;
+        return extras;
     }
     public String nombreporMatricula(ArrayList<Estudiante> est){
         System.out.println("Ingrese su matricula:");
@@ -858,7 +749,45 @@ public class Game {
         String nomEstudiante= alestudiante.getNombre();
         return nomEstudiante;
         }
-        
+    
+    public String chooseParticipante (ArrayList<Estudiante> estudiantes){
+        System.out.println("PARTICIPANTE: \n1.Ingresar matricula.\n2.Elegir Aleatoreamente");
+        String opcionParticipante= entrada.nextLine();
+        String participante= null;
+        switch (opcionParticipante){
+            case "1":
+                //matricula del participante
+                participante = nombreporMatricula(estudiantes);
+                break;
+            case "2":
+                //Eleccion del participante aleatoreamente
+               participante = nombreporAleatorio(estudiantes);
+                System.out.println("El estudiante elegido es: "+participante);
+                break;
+
+            default:
+                System.out.println("Ingrese una opcion correcta");
+        }//switch participante
+        return participante;
+    }
+    
+    public ArrayList<Pregunta> pregToUse(ArrayList<Pregunta> pregTotales, ArrayList<Integer> cantPregExtras,int cantPxNivel){
+        ArrayList<Pregunta> PregSegunCantNivel = new ArrayList<>();
+
+        ArrayList<Pregunta> copia = new ArrayList<>();
+        copia= (ArrayList)pregTotales.clone();
+        for (int j:cantPregExtras){
+            for (int k =0; k<cantPxNivel;k++){
+                    PregSegunCantNivel.add(copia.get(k));
+                    copia.remove(k);
+            }
+            for (int l=0;l<j;l++){
+                copia.remove(l);
+            }
+
+        }
+        return PregSegunCantNivel;
+    }
     }
 //clase
     

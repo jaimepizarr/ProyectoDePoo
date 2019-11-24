@@ -1,16 +1,16 @@
-enunciado,nivel,respuesta_correcta,respuesta_posible1,respuesta_posible2,respuesta_posible3;;;;;
-¬øCua°les son tipos de datos primitivos para na∫mero enteros en JAVA?;1;byte,short,int,long;int,long,float,double;integer,double;int,float,double
-¬øEn qua© paquete se encuentra la clase String?;1;java.lang;java.util;java.class;java.net
-¬øCua°l es la clase Wrapper para el tipo primitivo char?;1;Character;Char;String;ChartAt
-Seleccione el cÛdigo que crea un objeto tipo Scanner;1;new Scanner(System.in);new Scanner();new Scanner(System.out);"new Scanner(""in"")"
-Seleccione los pilares del paradigma orientado a objetos;1;AbstracciÛn,Encapsulamiento,Herencia,Polimorfismo;AbstracciÛn,Encapsulamiento,Herencia;AbstracciÛn,Encapsulamiento,Herencia,Mantenibilidad;AbstracciÛn,Encapsulamiento,Reusabilidad,Polimorfismo
-AbstracciÛn es:;2;Identificar las caractera≠sticas escenciales;Enforcarse en el ma°s pequea±o detalle;Capacidad para comportarse diferente;Tener ma∫ltiples implementaciones
-Selecciones los pilares de POO presentes en una clase;2;AbstracciÛn y Encapsulamiento;AbstracciÛn y Herencia;Polimorfismo;Encapsulamiento y reusabilidad
-Cua°l de los siguientes enunciados es FALSO respecto al constructor;2; tiene tipo de dato void;lleva el nombre de la clase;puede tener cualquier na∫mero de para°metros;crea e inicializa las variables del objeto
-Seleccione el enunciado verdadero respecto a sobrecarga de ma©todos;2;es la creaciÛn de varios ma©todos con el mismo nombre pero con diferente lista de tipos de para°metros;a creaciÛn de varios ma©todos con el mismo nombre pero con diferente tipo de retorno;es la creaciÛn de varios ma©todos que inician con nombre overload;es escribir un ma©todo con el igual nombre y para°metros pero cambiando el contenido
-La secciÛn de memoria donde se almacenan los objetos es:;2;heap;stack;full;cache
-Sobreescritura es:;3;Proporcionar un cÛdigo diferente a un ma©todo heredado;Escribir un nuevo ma©todo que inicie con nombre override_;Proceso por el cual una clase cambia sus atributos;Crear un constructor sin para°metros
-Seleccione el enunciado verdadero;3;Ma©todos esta°ticos no pueden sobreescribirse;Constructor protected se hereda;Siempre hay que escribir un constructor;SÛlo ma©todos pa∫blicos se pueden sobreescribir
-La clase abstracta:;3;Puede tener o no ma©todos abstractos;Siempre tiene un ma©todo abstracto;Permiten crear instancias de esa clase;No puede ser heredada
-Una interfaz;3;Tiene sÛlo ma©todos abstractos y constantes;Tienen variables de instancia;Permiten crear instancias de la interfaz;Puede implementar otra interfaz
-Enlace dina°mico es;3;el mecanismo en el cual la llamada a un ma©todo sobrescrito es resuelta en tiempo de ejecuciÛn;Cuando una variable se asocia a un tipo de una clase;Cuando se llama a un ma©todo sobreescrito;Cuando se llama a un ma©todo sobrecargado
+enunciado,nivel,respuesta_correcta,respuesta_posible1,respuesta_posible2,respuesta_posible3
+¬øCu√°les son tipos de datos primitivos para n√∫mero enteros en JAVA?;1;byte,short,int,long;int,long,float,double;integer,double;int,float,double
+¬øEn qu√© paquete se encuentra la clase String?;1;java.lang;java.util;java.class;java.net
+¬øCu√°l es la clase Wrapper para el tipo primitivo char?;1;Character;Char;String;ChartAt
+Seleccione el c√≥digo que crea un objeto tipo Scanner;1;new Scanner(System.in);new Scanner();new Scanner(System.out);new Scanner("in");
+Seleccione los pilares del paradigma orientado a objetos;1;Abstracci√≥n,Encapsulamiento,Herencia,Polimorfismo;Abstracci√≥n,Encapsulamiento,Herencia;Abstracci√≥n,Encapsulamiento,Herencia,Mantenibilidad;Abstracci√≥n,Encapsulamiento,Reusabilidad,Polimorfismo;
+Abstracci√≥n es:;2;Identificar las caracter√≠sticas escenciales;Enforcarse en el m√°s peque√±o detalle;Capacidad para comportarse diferente;Tener m√∫ltiples implementaciones
+Selecciones los pilares de POO presentes en una clase;2;Abstracci√≥n y Encapsulamiento;Abstracci√≥n y Herencia;Polimorfismo;Encapsulamiento y reusabilidad
+Cu√°l de los siguientes enunciados es FALSO respecto al constructor;2; tiene tipo de dato void;lleva el nombre de la clase;puede tener cualquier n√∫mero de par√°metros;crea e inicializa las variables del objeto
+Seleccione el enunciado verdadero respecto a sobrecarga de m√©todos;2;es la creaci√≥n de varios m√©todos con el mismo nombre pero con diferente lista de tipos de par√°metros;a creaci√≥n de varios m√©todos con el mismo nombre pero con diferente tipo de retorno;es la creaci√≥n de varios m√©todos que inician con nombre overload;es escribir un m√©todo con el igual nombre y par√°metros pero cambiando el contenido
+La secci√≥n de memoria donde se almacenan los objetos es:;2;heap;stack;full;cache
+Sobreescritura es:;3;Proporcionar un c√≥digo diferente a un m√©todo heredado;Escribir un nuevo m√©todo que inicie con nombre override_;Proceso por el cual una clase cambia sus atributos;Crear un constructor sin par√°metros
+Seleccione el enunciado verdadero;3;M√©todos est√°ticos no pueden sobreescribirse;Constructor protected se hereda;Siempre hay que escribir un constructor;S√≥lo m√©todos p√∫blicos se pueden sobreescribir
+La clase abstracta:;3;Puede tener o no m√©todos abstractos;Siempre tiene un m√©todo abstracto;Permiten crear instancias de esa clase;No puede ser heredada
+Una interfaz;3;Tiene s√≥lo m√©todos abstractos y constantes;Tienen variables de instancia;Permiten crear instancias de la interfaz;Puede implementar otra interfaz
+Enlace din√°mico es;3;el mecanismo en el cual la llamada a un m√©todo sobrescrito es resuelta en tiempo de ejecuci√≥n;Cuando una variable se asocia a un tipo de una clase;Cuando se llama a un m√©todo sobreescrito;Cuando se llama a un m√©todo sobrecargado

@@ -6,8 +6,8 @@
 package clasesArch;
 
 
-import Modelo.Pregunta;
-import Modelo.Pregunta;
+import Entidades.Pregunta;
+import Entidades.Pregunta;
 import java.io.BufferedReader;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -27,6 +27,7 @@ public class ArchPreguntas {
     
     public ArrayList<Pregunta> preguntas;
     public String materia;
+    private String ruta;
 
     public ArchPreguntas(String materia) {
         preguntas = new ArrayList<Pregunta>();
@@ -77,7 +78,7 @@ public class ArchPreguntas {
             String ruta = "src/archivos/preguntas"+materia+".csv"; //ruta del archivo que se va a leer
             writer = new FileWriter(ruta);
             for (Pregunta est : preguntas) {
-                writer.write(est.getEnunciado()+ "," + est.getNivel()+ "," + est.getrCorrecta()+","+ est.getrCorrecta()+","+est.getRespInc1()+","+est.getRespInc2()+","+est.getRespInc3()+System.lineSeparator());
+                writer.write(est.getEnunciado()+ ";" + est.getNivel()+ ";" + est.getrCorrecta()+";"+est.getRespInc1()+";"+est.getRespInc2()+";"+est.getRespInc3()+System.lineSeparator());
             }
             writer.close();
         } catch (IOException ex) {

@@ -5,9 +5,9 @@
  */
 package clasesArch;
 
-import Modelo.Paralelo;
-import Modelo.Reporte;
-import Modelo.Termino;
+import Entidades.Paralelo;
+import Entidades.Reporte;
+import Entidades.Termino;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -31,15 +31,15 @@ public class ArchReporte {
     public ArchReporte() {
     }
 
-    public void generarCsvReporte(Termino termino,Paralelo paralelo, String materia) throws IOException{
-        String archivoCSV = "src/archivos/reportes"+materia+"-"+paralelo.getParaleloCod()+ "-"+termino.getAnio()+"-"+termino.getNumero()+"-R"+".csv";
+    public void generarCsvReporte(String ruta) throws IOException{
+        String archivoCSV = ruta;
         Writer writer = Files.newBufferedWriter(Paths.get(archivoCSV));
     }
     
-    public void actualizarArchivoReporte(String materia,String paralelo,String anio ,String numero) {//// OJO HACER ESTO
+    public void actualizarArchivoReporte(String rute) {//// OJO HACER ESTO
         FileWriter writer = null;
         try {
-            String ruta = "src/archivos/reportes/"+materia+"-"+paralelo+ "-"+anio+"-"+numero+"-R"+".csv"; //ruta del archivo que se va a leer
+            String ruta = rute; //ruta del archivo que se va a leer
             writer = new FileWriter(ruta);
             for (Reporte est :reportes ) {
                 writer.write(est.getFechaDeljuego()+ ";" + est.getNombreParticipante()+ ";" + est.getNiveMaximoAlcanzado()+";"+ est.getPremio()+System.lineSeparator());
@@ -57,10 +57,10 @@ public class ArchReporte {
 
     }
     
-    public void leerArchivo(Termino termino,Paralelo paralelo, String materia) {
+    public void leerArchivo(String rute) {
         BufferedReader csvReader = null;
         try {
-            String ruta = "src/archivos/reportes/"+materia+"-"+paralelo.getParaleloCod()+ "-"+termino.getAnio()+"-"+termino.getNumero()+"-R"+".csv";; //ruta del archivo que se va a leer
+            String ruta = rute; //ruta del archivo que se va a leer
             csvReader = new BufferedReader(new FileReader(ruta));
             String fila = null;
             while ((fila = csvReader.readLine()) != null) { //iterar en el contenido del archivo

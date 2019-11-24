@@ -5,8 +5,8 @@
  */
 package clasesArch;
 
-import Modelo.Estudiante;
-import Modelo.Paralelo;
+import Entidades.Estudiante;
+import Entidades.Paralelo;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  */
 public class ArchEstudiantes {
     private Paralelo paralelo;
-
+    
     public ArchEstudiantes(Paralelo paralelo) {
         this.paralelo = paralelo;
     }
@@ -34,8 +34,9 @@ public class ArchEstudiantes {
             String codMateria = paralelo.getMateria().getCodigo();
             String anioTerm = paralelo.getTerminoP().getAnio();
             String numTerm = paralelo.getTerminoP().getNumero();
-            String rute = codMateria + "-" + paralelo.getParaleloCod() + "-" + anioTerm + "-" + numTerm + ".csv";
-            String ruta = "src/archivos/" + rute; //ruta del archivo que se va a leer
+            String ruta = "src/archivos/" + codMateria + "-" + paralelo.getParaleloCod() + "-" + anioTerm + "-" + numTerm + ".csv";
+
+             //ruta del archivo que se va a leer
             csvReader = new BufferedReader(new FileReader(ruta));
             String fila = csvReader.readLine(); //escapar cabecera de archivo
             while ((fila = csvReader.readLine()) != null) {
