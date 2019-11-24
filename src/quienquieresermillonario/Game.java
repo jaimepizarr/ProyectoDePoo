@@ -199,11 +199,12 @@ public class Game {
                                 case "COMODIN50_50":
                                     Random aleatorio = new Random(System.currentTimeMillis());
                                     int numAleatorio1 = aleatorio.nextInt(respIncorrectas.size());
-
-
-                                    int numAleatorio2 = aleatorio.nextInt(respIncorrectas.size());
-
                                     String incorrecta1 = respIncorrectas.get(numAleatorio1);
+                                    
+                                    int numAleatorio2 =numAleatorio1;
+                                    while(numAleatorio2==(numAleatorio1)){
+                                        numAleatorio2 = aleatorio.nextInt(respIncorrectas.size());
+                                    }
                                     String incorrecta2 = respIncorrectas.get(numAleatorio2);
                                     System.out.println("La opcion: " +incorrecta1 + " es incorrecta");
                                     System.out.println("La opcion: " +incorrecta2 + " es tambien incorrecta");
