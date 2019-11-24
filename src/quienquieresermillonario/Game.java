@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings("InitializerMayBeStatic")
-public class JuegoPrincipal {
+public class Game {
     Scanner entrada = new Scanner(System.in);
     private ArrayList<Termino> terminos_existentes = new ArrayList<>();
     private Termino terminosJuego;
@@ -43,7 +43,7 @@ public class JuegoPrincipal {
         /*int numero = (int) ((Math.random() * 5) + 1);
         System.out.println(numero);*/
 
-        JuegoPrincipal game = new JuegoPrincipal();
+        Game game = new Game();
         game.menu();
 
     }//main
@@ -390,7 +390,7 @@ public class JuegoPrincipal {
                               //MOSRTAR INGFORMACION AQUI
                               rep.generarCsvReporte(terminosJuego,paraleloJuego ,mat.getCodigo());
                             } catch (IOException ex) {
-                              Logger.getLogger(JuegoPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+                              Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         rep.actualizarArchivoReporte(mat.getCodigo(),paraleloJuego.getParaleloCod(),terminosJuego.getAnio() ,terminosJuego.getNumero());
                     }
@@ -792,26 +792,6 @@ public class JuegoPrincipal {
         }
         return nombre;
     }
-    public void actualizarArchivoReporte(String materia,String paralelo,String anio ,String numero) {//// OJO HACER ESTO
-        FileWriter writer = null;
-        try {
-            String ruta = "src/archivos/reportes/"+materia+"-"+paralelo+ "-"+anio+"-"+numero+"-R"+".csv"; //ruta del archivo que se va a leer
-            writer = new FileWriter(ruta);
-            for (Reporte est :reportes ) {
-                writer.write(est.getFechaDeljuego()+ ";" + est.getNombreParticipante()+ ";" + est.getNiveMaximoAlcanzado()+";"+ est.getPremio()+System.lineSeparator());
-            }
-            writer.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ArchPreguntas.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                writer.close();
-            } catch (IOException ex) {
-                Logger.getLogger(ArchPreguntas.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
-    }
 
     private Estudiante getRandomEstudiantes(ArrayList<Estudiante> est) {
         Random posAle = new Random(System.currentTimeMillis());
@@ -819,14 +799,6 @@ public class JuegoPrincipal {
         
         return est.get(numAleatorio);
     }
-
-    public void generarCsvReporte(Termino termino,Paralelo paralelo, String materia) throws IOException{
-        String archivoCSV = "src/archivos/reportes/"+materia+"-"+paralelo.getParaleloCod()+ "-"+termino.getAnio()+"-"+termino.getNumero()+"-R"+".csv";
-        Writer writer = Files.newBufferedWriter(Paths.get(archivoCSV));
-
-    }
-    
-
 
     public boolean verificacion (ArrayList<Pregunta> preguntas, int numPreguntas,Materia materia){
         ArrayList<String> niveles= new ArrayList<>();
